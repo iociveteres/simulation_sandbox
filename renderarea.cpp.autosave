@@ -54,3 +54,5 @@ void RenderArea::DrawPlayer() {
     painter.drawEllipse(50, 50, radius, radius);
 
 }
+
+

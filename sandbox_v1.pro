@@ -17,6 +17,7 @@ SOURCES += \
     world.cpp
 
 HEADERS += \
+    ModelConstants.h \
     mainwindow.h \
     player.h \
     renderarea.h \

@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include <QPainter>
+#include "ModelConstants.h"
 
 class Player
 {
@@ -17,6 +18,8 @@ public:
     Player(Team team);
     void setPosition();
     void setAngle();
+    QRect getKickableAreaRect();
+    QRect getPlayerWidgetRect();
 };
 
 #endif // PLAYER_H
