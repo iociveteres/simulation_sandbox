@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     ModelConstants.cpp \
+    ball.cpp \
     main.cpp \
     mainwindow.cpp \
     player.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     ModelConstants.h \
+    ball.h \
     mainwindow.h \
     player.h \
     renderarea.h \

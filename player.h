@@ -2,24 +2,41 @@
 #define PLAYER_H
 
 #include <QPainter>
+#include <QJsonObject>
 #include "ModelConstants.h"
+
 
 class Player
 {
-    enum class Team {ally, enemy};
+    Q_GADGET;
+
 private:
-    Team team;
     bool isGoalie = false;
 
-    int x;
-    int y;
+    double x;
+    double y;
     double angle;
+
 public:
+    enum Team {ally, enemy};
+    Q_ENUM(Team)
+
+    Player();
     Player(Team team);
+    Player(Team _team, int _x, int _y, double _angle);
+
     void setPosition();
     void setAngle();
-    QRect getKickableAreaRect();
-    QRect getPlayerWidgetRect();
+
+    QRectF getKickableAreaRect();
+    QRectF getPlayerWidgetRect();
+    int getAngle();
+    int getY();
+    int getX();
+    void readJSON(const QJsonObject &json);
+    void writeJSON(QJsonObject &json) const;
+private:
+    Team team;
 };
 
 #endif // PLAYER_H

@@ -2,18 +2,26 @@
 #define WORLD_H
 
 #include <vector>
-#include "Player.h"
+#include <QFile>
+#include <QTextStream>
+#include <QVector>
+#include <QJsonArray>
+
+#include "player.h"
+#include "ball.h"
 
 class World
 {
 private:
-    std::vector<Player> teamAlly;
-    std::vector<Player> teamEnemy;
+    QVector<Player> teamAlly;
+    QVector<Player> teamEnemy;
 
     Ball ball;
 
 public:
     World();
+    void writeJSON(QJsonObject &json) const;
+    void readJSON(const QJsonObject &json);
 };
 
 #endif // WORLD_H
