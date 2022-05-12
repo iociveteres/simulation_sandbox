@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
-#include "renderarea.h"
+#include "RenderArea.h"
 
 class MainWindow
         :public QWidget

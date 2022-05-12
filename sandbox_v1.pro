@@ -9,21 +9,21 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Ball.cpp \
+    MainWindow.cpp \
     ModelConstants.cpp \
-    ball.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    player.cpp \
-    renderarea.cpp \
-    world.cpp
+    Player.cpp \
+    RenderArea.cpp \
+    World.cpp \
+    main.cpp
 
 HEADERS += \
+    Ball.h \
+    MainWindow.h \
     ModelConstants.h \
-    ball.h \
-    mainwindow.h \
-    player.h \
-    renderarea.h \
-    world.h
+    Player.h \
+    RenderArea.h \
+    World.h
 
 FORMS +=
 

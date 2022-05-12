@@ -6,6 +6,9 @@
 #include <QTextStream>
 #include <QVector>
 #include <QJsonArray>
+#include <QJsonDocument>
+#include <QCborValue>
+#include <QCborMap>
 
 #include "player.h"
 #include "ball.h"
@@ -19,9 +22,15 @@ private:
     Ball ball;
 
 public:
+    enum SaveFormat {
+            Json, Binary
+        };
+
     World();
     void writeJSON(QJsonObject &json) const;
     void readJSON(const QJsonObject &json);
+    void populate();
+    bool loadWorld(World::SaveFormat saveFormat);
 };
 
 #endif // WORLD_H

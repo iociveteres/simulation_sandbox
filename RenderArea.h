@@ -7,7 +7,7 @@
 #include <QPainter>
 #include <QHBoxLayout>
 #include "ModelConstants.h"
-#include "player.h"
+#include "Player.h"
 
 class RenderArea : public QWidget
 {

@@ -1,4 +1,4 @@
-#include "ball.h"
+#include "Ball.h"
 
 Ball::Ball()
 {
