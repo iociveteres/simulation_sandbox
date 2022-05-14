@@ -10,8 +10,8 @@
 #include <QCborValue>
 #include <QCborMap>
 
-#include "player.h"
-#include "ball.h"
+#include "Player.h"
+#include "Ball.h"
 
 class World
 {
@@ -19,7 +19,7 @@ private:
     QVector<Player> teamAlly;
     QVector<Player> teamEnemy;
 
-    Ball ball;
+    Ball* ball;
 
 public:
     enum SaveFormat {
@@ -31,6 +31,12 @@ public:
     void readJSON(const QJsonObject &json);
     void populate();
     bool loadWorld(World::SaveFormat saveFormat);
+    bool saveWorld(World::SaveFormat saveFormat) const;
+
+    World getWorld();
+    QVector<Player> getTeamAlly() const;
+    QVector<Player> getTeamEnemy() const;
+    Ball *getBall() const;
 };
 
 #endif // WORLD_H

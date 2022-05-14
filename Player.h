@@ -33,6 +33,8 @@ public:
     int getAngle();
     int getY();
     int getX();
+    Player::Team getTeam() const;
+
     void readJSON(const QJsonObject &json);
     void writeJSON(QJsonObject &json) const;
 private:

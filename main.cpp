@@ -5,12 +5,8 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-
     bool newWorld = true;
     bool json = true;
-
 
     World world;
     if (newWorld)
@@ -21,7 +17,10 @@ int main(int argc, char *argv[])
     QTextStream(stdout) << "world ended in the following state:\n";
 
     if (!world.saveWorld(json ? World::Json : World::Binary))
-        return 1;
+       QTextStream(stdout) << "Succesfull save\n";
+
+    QApplication a(argc, argv);
+    MainWindow w(nullptr, &world);
 
     w.show();
     return a.exec();

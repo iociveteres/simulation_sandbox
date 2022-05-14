@@ -11,7 +11,10 @@ private:
     RenderArea* render;
 public:
     MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent, World *world);
+
     ~MainWindow();
+
 };
 
 #endif // MAINWINDOW_H

@@ -1,9 +1,9 @@
 #include "MainWindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent, World* world)
     : QWidget(parent)
 {
-    render = new RenderArea();
+    render = new RenderArea(nullptr, world);
     setFixedSize(1440, 900);
 
     QHBoxLayout* layout = new QHBoxLayout(this);

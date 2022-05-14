@@ -1,4 +1,4 @@
-#include "player.h"
+#include "Player.h"
 
 Player::Player()
 {
@@ -70,4 +70,9 @@ void Player::writeJSON(QJsonObject &json) const
     json["y"] = x;
     json["angle"] = angle;
 
+}
+
+Player::Team Player::getTeam() const
+{
+    return team;
 }
