@@ -9,7 +9,6 @@ Ball::Ball(double _x, double _y)
 {
     x = _x;
     y = _y;
-
 }
 
 double Ball::getX() const
@@ -26,7 +25,7 @@ double Ball::getY() const
 
 QRectF Ball::getBallRect()
 {
-    return QRectF(x - r_BALL_SIZE/2, y - r_BALL_SIZE/2,
+    return QRectF(r_PITCH_MARGIN + x - r_BALL_SIZE/2, r_PITCH_MARGIN + y - r_BALL_SIZE/2,
                  r_BALL_SIZE, r_BALL_SIZE);
 }
 

@@ -7,7 +7,8 @@
 int main(int argc, char *argv[])
 {
     //    QTextStream(stdout) << "Succesfull save\n";
-    bool newWorld = false;
+    bool newWorld = true;
+    bool makeSave = false;
     bool json = true;
 
     QDir dir;
@@ -19,7 +20,7 @@ int main(int argc, char *argv[])
     else if (!world.loadWorld(json ? World::Json : World::Binary))
             return 1;
 
-    if (!newWorld)
+    if (makeSave)
         if (!world.saveWorld(json ? World::Json : World::Binary))
             ;
 

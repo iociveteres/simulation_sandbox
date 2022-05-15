@@ -24,7 +24,7 @@ RenderArea::RenderArea(QWidget* parent, World* _world):QWidget(parent)
     layout->addWidget(label);
     setLayout(layout);
 
-    drawWorld();
+    drawWorld(true);
 
     label->setPixmap(QPixmap::fromImage(*image));
 }
@@ -49,7 +49,7 @@ void RenderArea::DrawCircle() {
 
 void RenderArea::drawPlayer(Player player) {
     QPainter painter(image);
-    painter.setWindow(playArea);
+    painter.setWindow(wholeFieldArea);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     QRectF kickableAreaRect = player.getKickableAreaRect();
@@ -128,7 +128,7 @@ void RenderArea::drawBall(Ball *ball)
             return;
     QPainter painter(image);
 
-    painter.setWindow(playArea);
+    painter.setWindow(wholeFieldArea);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     QRectF ballRect = ball->getBallRect();
@@ -138,8 +138,27 @@ void RenderArea::drawBall(Ball *ball)
     painter.drawEllipse(ballRect);
 }
 
-void RenderArea::drawWorld() {
+void RenderArea::drawRoleRects(QVector<PlayerRole> roles)
+{
+    QPainter painter(image);
+    painter.setWindow(wholeFieldArea);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    painter.setPen(QPen(Qt::yellow, 0.05));
+    painter.setBrush(Qt::NoBrush);
+    for (PlayerRole r: roles) {
+        QRectF a = r.getRoleRect();
+        painter.drawRect(r.getRoleRect());
+        painter.drawEllipse(r.getRolePoint(), 0.1, 0.1);
+    }
+}
+
+void RenderArea::drawWorld(bool doDrawRoleRects = false) {
     drawField();
+
+    if (doDrawRoleRects) {
+        drawRoleRects(Player().getRoles());
+    }
 
     for (Player ally: world->getTeamAlly()) {
         drawPlayer(ally);
@@ -150,6 +169,7 @@ void RenderArea::drawWorld() {
     }
 
     drawBall(world->getBall());
+
 
     //if (world->getCalculated()) {}
 }

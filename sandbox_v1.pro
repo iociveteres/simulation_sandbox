@@ -13,7 +13,9 @@ SOURCES += \
     MainWindow.cpp \
     ModelConstants.cpp \
     Player.cpp \
+    PlayerRole.cpp \
     RenderArea.cpp \
+    Velocity.cpp \
     World.cpp \
     main.cpp
 
@@ -22,7 +24,9 @@ HEADERS += \
     MainWindow.h \
     ModelConstants.h \
     Player.h \
+    PlayerRole.h \
     RenderArea.h \
+    Velocity.h \
     World.h
 
 FORMS +=

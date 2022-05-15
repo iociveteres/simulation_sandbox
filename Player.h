@@ -5,14 +5,16 @@
 #include <QJsonObject>
 #include <QVariant>
 #include "ModelConstants.h"
-
+#include "PlayerRole.h"
 
 class Player
 {
     Q_GADGET;
 
 private:
-    bool isGoalie = false;
+    static const QVector<PlayerRole> roles;
+    PlayerRole playerRole;
+    PlayerRole::RoleName assignedRole = PlayerRole::RoleName::Unassigned;
 
     double x;
     double y;
@@ -28,6 +30,8 @@ public:
 
     void setPosition();
     void setAngle();
+    void setRole(PlayerRole role); // set role
+    PlayerRole checkRole(); // check role based on position
 
     QRectF getKickableAreaRect();
     QRectF getPlayerWidgetRect();
@@ -35,6 +39,7 @@ public:
     int getAngle();
     int getY();
     int getX();
+    static QVector<PlayerRole> getRoles();
 
     void readJSON(const QJsonObject &json);
     void writeJSON(QJsonObject &json) const;

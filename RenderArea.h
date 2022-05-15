@@ -25,8 +25,9 @@ public:
     void drawPlayer(Player player);
     void drawField();
     void drawBall(Ball* ball);
+    void drawRoleRects(QVector<PlayerRole> roles);
 
-    void drawWorld();
+    void drawWorld(bool drawRoleRects);
 
     QRectF getRectFAtCenter(double x, double y, double awidth, double aheight);
     QRectF getRectFCircleAtCenter(double x, double y, double radius);
