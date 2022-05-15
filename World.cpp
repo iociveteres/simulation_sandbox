@@ -134,13 +134,13 @@ World World::getWorld()
 }
 
 void World::populate() {
-    teamAlly.append(Player(Player::Team::ally, 30, 20, 90));
-    teamAlly.append(Player(Player::Team::ally, 30, 30, 90));
-    teamAlly.append(Player(Player::Team::ally, 30, 40, 90));
+    teamAlly.append(Player(Player::Team::ally, r_PITCH_LENGTH/4, 0, 90));
+    teamAlly.append(Player(Player::Team::ally, r_PITCH_LENGTH/4, r_PITCH_WIDTH/2, 90));
+    teamAlly.append(Player(Player::Team::ally, r_PITCH_LENGTH/4, r_PITCH_WIDTH, 90));
 
-    teamEnemy.append(Player(Player::Team::enemy, 50, 20, -90));
-    teamEnemy.append(Player(Player::Team::enemy, 50, 30, -90));
-    teamEnemy.append(Player(Player::Team::enemy, 50, 40, -90));
+    teamEnemy.append(Player(Player::Team::enemy, r_PITCH_LENGTH/4*3,0, -90));
+    teamEnemy.append(Player(Player::Team::enemy, r_PITCH_LENGTH/4*3, r_PITCH_WIDTH/2, -90));
+    teamEnemy.append(Player(Player::Team::enemy, r_PITCH_LENGTH/4*3, r_PITCH_WIDTH, -90));
 
-    ball = new Ball(40, 30);
+    ball = new Ball(r_PITCH_LENGTH/2, r_PITCH_WIDTH/2);
 }
