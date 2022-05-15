@@ -72,11 +72,6 @@ void RenderArea::drawPlayer(Player player) {
     painter.setBrush(QBrush(playerColor, Qt::SolidPattern));
 
     painter.drawChord(kickableAreaRect, (180+player.getAngle())*16, 180*16);
-
-    //painter.drawLine(10, 10, 50, 50);
-
-    //painter.drawEllipse(50, 50, radius, radius);
-
 }
 
 void RenderArea::drawField() {
@@ -129,6 +124,8 @@ void RenderArea::drawField() {
 
 void RenderArea::drawBall(Ball *ball)
 {
+    if (ball == nullptr)
+            return;
     QPainter painter(image);
 
     painter.setWindow(playArea);

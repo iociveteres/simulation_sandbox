@@ -27,8 +27,8 @@ void World::readJSON(const QJsonObject &json)
 //    if (json.contains("name") && json["name"].isString())
 //        mName = json["name"].toString();
 
-    if (json.contains("npcs") && json["npcs"].isArray()) {
-        QJsonArray teamAllyArray = json["npcs"].toArray();
+    if (json.contains("teamAlly") && json["teamAlly"].isArray()) {
+        QJsonArray teamAllyArray = json["teamAlly"].toArray();
         teamAlly.clear();
         teamAlly.reserve(teamAllyArray.size());
         for (int playerIndex = 0; playerIndex < teamAllyArray.size(); ++playerIndex) {
@@ -38,6 +38,21 @@ void World::readJSON(const QJsonObject &json)
             teamAlly.append(player);
         }
     }
+    if (json.contains("teamEnemy") && json["teamEnemy"].isArray()) {
+        QJsonArray teamEnemyArray = json["teamEnemy"].toArray();
+        teamEnemy.clear();
+        teamEnemy.reserve(teamEnemyArray.size());
+        for (int playerIndex = 0; playerIndex < teamEnemyArray.size(); ++playerIndex) {
+            QJsonObject playerObject = teamEnemyArray[playerIndex].toObject();
+            Player player;
+            player.readJSON(playerObject);
+            teamEnemy.append(player);
+        }
+    }
+
+   ball = new Ball();
+    if (json.contains("ball") && json["ball"].isObject())
+        ball->readJSON(json["ball"].toObject());
 }
 
 void World::writeJSON(QJsonObject &json) const
@@ -45,11 +60,23 @@ void World::writeJSON(QJsonObject &json) const
     //json["name"] = mName;
     QJsonArray teamAllyArray;
     for (const Player &player : teamAlly) {
-        QJsonObject npcObject;
-        player.writeJSON(npcObject);
-        teamAllyArray.append(npcObject);
+        QJsonObject playerObject;
+        player.writeJSON(playerObject);
+        teamAllyArray.append(playerObject);
     }
-    json["npcs"] = teamAllyArray;
+    json["teamAlly"] = teamAllyArray;
+
+    QJsonArray teamEnemyArray;
+    for (const Player &player : teamEnemy) {
+        QJsonObject playerObject;
+        player.writeJSON(playerObject);
+        teamEnemyArray.append(playerObject);
+    }
+    json["teamEnemy"] = teamEnemyArray;
+
+    QJsonObject ballObject;
+    ball->writeJSON(ballObject);
+    json["ball"] = ballObject;
 }
 
 bool World::loadWorld(World::SaveFormat saveFormat)
@@ -75,6 +102,8 @@ bool World::loadWorld(World::SaveFormat saveFormat)
                         << loadDoc["player"]["name"].toString()
                         << " using "
                         << (saveFormat != Json ? "CBOR" : "JSON") << "...\n";
+
+    qDebug() << "Succesfull load\n";
     return true;
 }
 
@@ -95,6 +124,7 @@ bool World::saveWorld(World::SaveFormat saveFormat) const
         ? QJsonDocument(gameObject).toJson()
         : QCborValue::fromJsonValue(gameObject).toCbor());
 
+    qDebug() << "Succesfull save\n";
     return true;
 }
 

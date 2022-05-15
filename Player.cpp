@@ -64,12 +64,11 @@ void Player::readJSON(const QJsonObject &json)
 
 void Player::writeJSON(QJsonObject &json) const
 {
-    json["team"] = team;
+    json["team"] = static_cast<int>(team);
     json["isGoalie"] = isGoalie;
-    json["x"] = y;
-    json["y"] = x;
+    json["x"] = x;
+    json["y"] = y;
     json["angle"] = angle;
-
 }
 
 Player::Team Player::getTeam() const

@@ -2,11 +2,16 @@
 #include "World.h"
 
 #include <QApplication>
+#include <QDir>
 
 int main(int argc, char *argv[])
 {
-    bool newWorld = true;
+    //    QTextStream(stdout) << "Succesfull save\n";
+    bool newWorld = false;
     bool json = true;
+
+    QDir dir;
+    qDebug() << "Current dir: " << dir.currentPath() << "\n";
 
     World world;
     if (newWorld)
@@ -14,13 +19,13 @@ int main(int argc, char *argv[])
     else if (!world.loadWorld(json ? World::Json : World::Binary))
             return 1;
 
-    QTextStream(stdout) << "world ended in the following state:\n";
-
-    if (!world.saveWorld(json ? World::Json : World::Binary))
-       QTextStream(stdout) << "Succesfull save\n";
+    if (!newWorld)
+        if (!world.saveWorld(json ? World::Json : World::Binary))
+            ;
 
     QApplication a(argc, argv);
     MainWindow w(nullptr, &world);
+    qDebug() << "App path : " << a.applicationDirPath();
 
     w.show();
     return a.exec();

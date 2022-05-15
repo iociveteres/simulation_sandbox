@@ -3,6 +3,7 @@
 
 #include <QPainter>
 #include <QJsonObject>
+#include <QVariant>
 #include "ModelConstants.h"
 
 
@@ -30,10 +31,10 @@ public:
 
     QRectF getKickableAreaRect();
     QRectF getPlayerWidgetRect();
+    Player::Team getTeam() const;
     int getAngle();
     int getY();
     int getX();
-    Player::Team getTeam() const;
 
     void readJSON(const QJsonObject &json);
     void writeJSON(QJsonObject &json) const;
