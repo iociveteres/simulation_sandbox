@@ -5,8 +5,8 @@
 class Velocity
 {
 private:
-    double absolute_value;
-    double dir_angle;
+    double x;
+    double y;
 public:
     Velocity();
 };

@@ -25,6 +25,14 @@ const double r_KICKABLE_AREA = r_PLAYER_SIZE + r_KICKABLE_MARGIN + r_BALL_SIZE;
 
 const int r_TOTAL_FIELD_LENGTH = r_PITCH_LENGTH + 2*r_PITCH_MARGIN;
 const int r_TOTAL_FIELD_WIDTH = r_PITCH_WIDTH + 2*r_PITCH_MARGIN;
+//view distance
+const double team_far_length = 40.0;
+const double team_too_far_length = 60.0;
+
+const double quantize_step = 0.1;
+const double quantize_step_l = 0.01;
+
+
 
 int toPixmapCoord(double value);
 

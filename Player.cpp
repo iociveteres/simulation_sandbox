@@ -2,11 +2,15 @@
 
 Player::Player()
 {
+    playerCount++;
+    id = playerCount;
 }
 
 Player::Player(Team _team)
 {
     team = _team;
+    id = playerCount;
+    playerCount++;
 }
 
 Player::Player(Team _team, int _x, int _y, double _angle)
@@ -15,6 +19,10 @@ Player::Player(Team _team, int _x, int _y, double _angle)
     x = _x;
     y = _y;
     angle = _angle;
+    id = playerCount;
+    playerCount++;
+}
+
 }
 
 void Player::setRole(PlayerRole role)
@@ -113,4 +121,6 @@ QVector<PlayerRole> getRolesVec() {
     return roles;
 }
 
+// initialise static
 const QVector<PlayerRole> Player::roles = getRolesVec();
+int Player::playerCount = 0;
