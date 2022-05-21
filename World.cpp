@@ -1,6 +1,9 @@
 #include "World.h"
 
+World::World()
+{
 
+}
 
 QVector<Player> World::getTeamAlly() const
 {
@@ -17,10 +20,6 @@ Ball *World::getBall() const
     return ball;
 }
 
-World::World()
-{
-    
-}
 
 void World::readJSON(const QJsonObject &json)
 {
@@ -79,11 +78,9 @@ void World::writeJSON(QJsonObject &json) const
     json["ball"] = ballObject;
 }
 
-bool World::loadWorld(World::SaveFormat saveFormat)
+bool World::loadWorld(World::SaveFormat saveFormat, QString fileName)
 {
-    QFile loadFile(saveFormat == Json
-        ? QStringLiteral("save.json")
-        : QStringLiteral("save.dat"));
+    QFile loadFile(fileName);
 
     if (!loadFile.open(QIODevice::ReadOnly)) {
         qWarning("Couldn't open save file.");
@@ -128,10 +125,17 @@ bool World::saveWorld(World::SaveFormat saveFormat) const
     return true;
 }
 
-World World::getWorld()
+//World World::getWorld()
+//{
+//    return *this;
+//}
+
+void World::handlePlayButton()
 {
-    return *this;
+    int a = 0;
+    a++;
 }
+
 
 void World::populate() {
     teamAlly.append(Player(Player::Team::ally, r_PITCH_LENGTH/4, 0, 90));

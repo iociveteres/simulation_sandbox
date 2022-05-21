@@ -24,8 +24,13 @@ RenderArea::RenderArea(QWidget* parent, World* _world):QWidget(parent)
     layout->addWidget(label);
     setLayout(layout);
 
-    drawWorld(true);
+    drawWorld(false);
 
+    label->setPixmap(QPixmap::fromImage(*image));
+}
+
+void RenderArea::update() {
+    drawWorld(true);
     label->setPixmap(QPixmap::fromImage(*image));
 }
 
@@ -72,6 +77,38 @@ void RenderArea::drawPlayer(Player player) {
     painter.setBrush(QBrush(playerColor, Qt::SolidPattern));
 
     painter.drawChord(kickableAreaRect, (180+player.getAngle())*16, 180*16);
+}
+
+void RenderArea::drawIntentions(Player player) {
+    QPainter painter(image);
+    painter.setWindow(wholeFieldArea);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    QPointF intendedPoint = player.getIntention().getPrefferedPoint();
+    QPointF currentPoint = player.getCoordinatesPoint();
+    QRectF intendedKickableAreaRect = player.getKickableAreaRect();
+
+    painter.setPen(QPen(neutralColor, 0.2));
+    painter.setBrush(Qt::NoBrush);
+
+    painter.drawChord(intendedKickableAreaRect, player.getAngle()*16, 180*16);
+
+    Qt::GlobalColor playerColor;
+    switch (player.getTeam()) {
+    case Player::enemy:
+        playerColor = enemyColor;
+        break;
+    case Player::ally:
+        playerColor = allyColor;
+        break;
+    }
+    painter.setPen(QPen(playerColor, 0.2));
+    painter.setBrush(Qt::NoBrush);
+
+    painter.drawChord(intendedKickableAreaRect, (180+player.getAngle())*16, 180*16);
+
+    painter.setPen(QPen(playerColor, 0.2, Qt::DashLine));
+    painter.drawLine(intendedPoint, currentPoint);
 }
 
 void RenderArea::drawField() {
@@ -147,7 +184,7 @@ void RenderArea::drawRoleRects(QVector<PlayerRole> roles)
     painter.setPen(QPen(Qt::yellow, 0.05));
     painter.setBrush(Qt::NoBrush);
     for (PlayerRole r: roles) {
-        QRectF a = r.getRoleRect();
+        //QRectF a = r.getRoleRect(); debug, later delete
         painter.drawRect(r.getRoleRect());
         painter.drawEllipse(r.getRolePoint(), 0.1, 0.1);
     }

@@ -23,6 +23,8 @@ Player::Player(Team _team, int _x, int _y, double _angle)
     playerCount++;
 }
 
+Player::~Player()
+{
 }
 
 void Player::setRole(PlayerRole role)
@@ -53,6 +55,11 @@ int Player::getAngle() {
 QVector<PlayerRole> Player::getRoles()
 {
     return Player::roles;
+}
+
+int Player::getPlayerCount()
+{
+    return playerCount;
 }
 
 // От центра до левого верхнего края

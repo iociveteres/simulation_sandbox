@@ -20,9 +20,11 @@ private:
 
 public:
     RenderArea(QWidget *parent = nullptr, World* _world = nullptr);
+    void update();
+
     void DrawCircle();
-    void drawPlayer();
     void drawPlayer(Player player);
+    void drawIntentions(Player player);
     void drawField();
     void drawBall(Ball* ball);
     void drawRoleRects(QVector<PlayerRole> roles);
@@ -31,6 +33,8 @@ public:
 
     QRectF getRectFAtCenter(double x, double y, double awidth, double aheight);
     QRectF getRectFCircleAtCenter(double x, double y, double radius);
+
+
 };
 
 #endif // RENDERAREA_H
