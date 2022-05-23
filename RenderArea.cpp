@@ -58,11 +58,20 @@ void RenderArea::drawPlayer(Player player) {
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     QRectF kickableAreaRect = player.getKickableAreaRect();
-
-    painter.setPen(QPen(neutralColor));
+    QPen p{neutralColor};
+    p.setJoinStyle(Qt::MiterJoin);
+    p.setWidthF(0.1);
+    painter.setPen(p);
     painter.setBrush(QBrush(neutralColor, Qt::SolidPattern));
-
-    painter.drawChord(kickableAreaRect, player.getAngle()*16, 180*16);
+    p.setColor(Qt::red);
+    painter.setPen(p);
+    // painter.drawEllipse(kickableAreaRect);
+    // painter.drawRect(QRect(5, 5, 5, 5));
+    // painter.drawChord(QRect(10, 10, 5, 5), 0, 180 * 16);
+    p.setColor(Qt::black);
+    painter.setPen(p);
+    painter.drawChord(kickableAreaRect, player.getAngle() * 16, 180*16);
+    // painter.drawChord(kickableAreaRect, 90 * 16, 180*16);
 
     Qt::GlobalColor playerColor;
     switch (player.getTeam()) {
@@ -73,10 +82,11 @@ void RenderArea::drawPlayer(Player player) {
         playerColor = allyColor;
         break;
     }
-    painter.setPen(QPen(playerColor));
+    p.setColor(playerColor);
+    painter.setPen(p);
     painter.setBrush(QBrush(playerColor, Qt::SolidPattern));
 
-    painter.drawChord(kickableAreaRect, (180+player.getAngle())*16, 180*16);
+    painter.drawChord(kickableAreaRect, (player.getAngle() + 180) * 16, 180*16);
 }
 
 void RenderArea::drawIntentions(Player player) {
@@ -169,10 +179,13 @@ void RenderArea::drawBall(Ball *ball)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     QRectF ballRect = ball->getBallRect();
-
-    painter.setPen(QPen(ballColor, 1));
+    QPen q{ballColor};
+    q.setWidthF(0.1);
+    painter.setPen(q);
     painter.setBrush(QBrush(ballFillColor, Qt::SolidPattern));
     painter.drawEllipse(ballRect);
+    painter.drawRect(ballRect);
+    painter.drawLine(r_PITCH_MARGIN, r_PITCH_MARGIN + r_PITCH_WIDTH / 2, r_PITCH_MARGIN + r_PITCH_LENGTH, r_PITCH_MARGIN + r_PITCH_WIDTH / 2);
 }
 
 void RenderArea::drawRoleRects(QVector<PlayerRole> roles)
@@ -197,13 +210,13 @@ void RenderArea::drawWorld(bool doDrawRoleRects = false) {
         drawRoleRects(Player().getRoles());
     }
 
-    for (Player ally: world->getTeamAlly()) {
+    for (Player& ally: world->getTeamAlly()) {
         drawPlayer(ally);
     }
 
-    for (Player enemy: world->getTeamEnemy()) {
+    /* for (Player& enemy: world->getTeamEnemy()) {
         drawPlayer(enemy);
-    }
+    } */
 
     drawBall(world->getBall());
 

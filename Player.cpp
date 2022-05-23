@@ -75,7 +75,7 @@ int Player::getPlayerCount()
 
 QRectF Player::getKickableAreaRect()
 {
-    return QRectF(r_PITCH_MARGIN+ x - r_KICKABLE_AREA/2,
+    return QRectF(r_PITCH_MARGIN + x - r_KICKABLE_AREA/2,
                   r_PITCH_MARGIN + y - r_KICKABLE_AREA/2,
                  r_KICKABLE_AREA, r_KICKABLE_AREA);
 }

@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
     //    QTextStream(stdout) << "Succesfull save\n";
-    bool newWorld = false;
+    bool newWorld = true;
     bool makeSave = false;
     bool json = true;
 

@@ -25,7 +25,7 @@ double Ball::getY() const
 
 QRectF Ball::getBallRect()
 {
-    return QRectF(r_PITCH_MARGIN + x - r_BALL_SIZE - 0.425, r_PITCH_MARGIN + y - r_BALL_SIZE/2,
+    return QRectF(r_PITCH_MARGIN + x - r_BALL_SIZE, r_PITCH_MARGIN + y - r_BALL_SIZE / 2,
                  r_BALL_SIZE, r_BALL_SIZE);
 }
 

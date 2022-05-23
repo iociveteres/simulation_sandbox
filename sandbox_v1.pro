@@ -14,7 +14,6 @@ SOURCES += \
     MainWindow.cpp \
     ModelConstants.cpp \
     Player.cpp \
-    PlayerAI.cpp \
     PlayerRole.cpp \
     PlayerWorldModel.cpp \
     PrefferedPoint.cpp \
@@ -29,7 +28,6 @@ HEADERS += \
     MainWindow.h \
     ModelConstants.h \
     Player.h \
-    PlayerAI.h \
     PlayerRole.h \
     PlayerWorldModel.h \
     PrefferedPoint.h \

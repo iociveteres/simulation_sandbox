@@ -17,10 +17,10 @@ const double r_PENALTY_SPOT_DIST = 11.0;
 const double r_PENALTY_ARC_R = 9.17;
 const double r_CORNER_ARC_R = 1.0 * 2;
 
-const double r_PLAYER_SIZE = 0.3;
+const double r_PLAYER_SIZE = 1;
 const double r_PLAYER_WIDGET_SIZE = 1.0;
 const double r_KICKABLE_MARGIN = 0.7;
-const double r_BALL_SIZE = 0.085;
+const double r_BALL_SIZE = 1;
 const double r_KICKABLE_AREA = r_PLAYER_SIZE + r_KICKABLE_MARGIN + r_BALL_SIZE;
 
 const int r_TOTAL_FIELD_LENGTH = r_PITCH_LENGTH + 2*r_PITCH_MARGIN;
