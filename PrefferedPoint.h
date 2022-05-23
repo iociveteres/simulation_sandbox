@@ -7,7 +7,9 @@ class PrefferedPoint : public QPointF
 {
     //using QPointF::QPointF;
 public:
+    PrefferedPoint();
     PrefferedPoint(qreal xpos, qreal ypos);
+
 };
 
 #endif // PREFFEREDPOINT_H

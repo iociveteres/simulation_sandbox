@@ -1,6 +1,9 @@
 #include "Action.h"
 
+Action::Action()
+{
 
+}
 
 PrefferedPoint Action::getPrefferedPoint() const
 {

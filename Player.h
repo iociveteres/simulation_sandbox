@@ -8,7 +8,7 @@
 #include "Action.h"
 #include "ModelConstants.h"
 #include "PlayerRole.h"
-#include "PlayerWorldModel.h"
+//#include "PlayerWorldModel.h"
 
 class Player
 {
@@ -19,7 +19,7 @@ private:
     PlayerRole playerRole;
     PlayerRole::RoleName assignedRole = PlayerRole::RoleName::Unassigned;
     Action intention;
-    PlayerWorldModel worldModel;
+    //PlayerWorldModel worldModel;
 
     double x;
     double y;

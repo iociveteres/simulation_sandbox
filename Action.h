@@ -14,6 +14,8 @@ public:
     };
 
     Action();
+    PrefferedPoint getPrefferedPoint() const;
+    bool operator==(const Action &rhs) const;
 
 private:
     ActionType actionType;

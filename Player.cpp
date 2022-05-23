@@ -128,6 +128,7 @@ void Player::writeJSON(QJsonObject &json) const
 // return list, containing list of Actions for every player;
 QList<Action> Player::makePrefferedActionsList()
 {
+    /*
     QList<QList<Action>> actionsOfPlayers;
     for (Player p: worldModel.getTeamAlly()) {
         QList<Action> actionsOfPlayer;
@@ -140,6 +141,8 @@ QList<Action> Player::makePrefferedActionsList()
 
         actionsOfPlayers.append(actionsOfPlayer);
     }
+    */
+    return QList<Action>();
 }
 // let every ally determine what action should he execute,
 // based on desirability of action
