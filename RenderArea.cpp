@@ -30,7 +30,7 @@ RenderArea::RenderArea(QWidget* parent, World* _world):QWidget(parent)
 }
 
 void RenderArea::update() {
-    drawWorld(true);
+    drawWorld(false);
     label->setPixmap(QPixmap::fromImage(*image));
 }
 
@@ -184,8 +184,6 @@ void RenderArea::drawBall(Ball *ball)
     painter.setPen(q);
     painter.setBrush(QBrush(ballFillColor, Qt::SolidPattern));
     painter.drawEllipse(ballRect);
-    painter.drawRect(ballRect);
-    painter.drawLine(r_PITCH_MARGIN, r_PITCH_MARGIN + r_PITCH_WIDTH / 2, r_PITCH_MARGIN + r_PITCH_LENGTH, r_PITCH_MARGIN + r_PITCH_WIDTH / 2);
 }
 
 void RenderArea::drawRoleRects(QVector<PlayerRole> roles)
@@ -214,9 +212,9 @@ void RenderArea::drawWorld(bool doDrawRoleRects = false) {
         drawPlayer(ally);
     }
 
-    /* for (Player& enemy: world->getTeamEnemy()) {
+    for (Player& enemy: world->getTeamEnemy()) {
         drawPlayer(enemy);
-    } */
+    }
 
     drawBall(world->getBall());
 
