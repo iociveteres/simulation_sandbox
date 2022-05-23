@@ -8,6 +8,7 @@
 #include "Action.h"
 #include "ModelConstants.h"
 #include "PlayerRole.h"
+#include "PlayerWorldModel.h"
 
 class Player
 {
@@ -17,6 +18,8 @@ private:
     static const QVector<PlayerRole> roles;
     PlayerRole playerRole;
     PlayerRole::RoleName assignedRole = PlayerRole::RoleName::Unassigned;
+    Action intention;
+    PlayerWorldModel worldModel;
 
     double x;
     double y;
@@ -43,16 +46,24 @@ public:
     QRectF getIntentionsKickableAreaRect();
     QRectF getPlayerWidgetRect();
     Player::Team getTeam() const;
-    int getAngle();
-    int getY();
-    int getX();
+    double getAngle();
+    double getY();
+    double getX();
+    QPointF getCoordinatesPoint();
     static QVector<PlayerRole> getRoles();
     static int getPlayerCount();
 
     void readJSON(const QJsonObject &json);
     void writeJSON(QJsonObject &json) const;
 
-    QList<Action> makePrefferedActionList();
+    QList<Action> makePrefferedActionsList();
+    void determinePrefferedIntention();
+
+    double checkMarking(Player enemy);
+    double checkDefendGoal(Player enemy);
+    double checkWaitDefensive(Player enemy);
+
+    Action getIntention() const;
 
 private:
     Team team;

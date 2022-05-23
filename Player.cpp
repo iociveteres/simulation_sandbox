@@ -1,5 +1,10 @@
 #include "Player.h"
 
+Action Player::getIntention() const
+{
+    return intention;
+}
+
 Player::Player()
 {
     playerCount++;
@@ -40,15 +45,19 @@ PlayerRole Player::checkRole()
     return Goalie();
 }
 
-int Player::getX() {
+double Player::getX() {
     return x;
 }
 
-int Player::getY() {
+double Player::getY() {
     return y;
 }
 
-int Player::getAngle() {
+QPointF Player::getCoordinatesPoint() {
+    return QPointF(x, y);
+}
+
+double Player::getAngle() {
     return angle;
 }
 
@@ -68,6 +77,15 @@ QRectF Player::getKickableAreaRect()
 {
     return QRectF(r_PITCH_MARGIN+ x - r_KICKABLE_AREA/2,
                   r_PITCH_MARGIN + y - r_KICKABLE_AREA/2,
+                 r_KICKABLE_AREA, r_KICKABLE_AREA);
+}
+
+QRectF Player::getIntentionsKickableAreaRect()
+{
+    double _x = this->intention.getPrefferedPoint().x();
+    double _y = this->intention.getPrefferedPoint().y();
+    return QRectF(r_PITCH_MARGIN + _x - r_KICKABLE_AREA/2,
+                  r_PITCH_MARGIN + _y - r_KICKABLE_AREA/2,
                  r_KICKABLE_AREA, r_KICKABLE_AREA);
 }
 
@@ -104,6 +122,31 @@ void Player::writeJSON(QJsonObject &json) const
     json["x"] = x;
     json["y"] = y;
     json["angle"] = angle;
+}
+// calculate level of desirability for possible actions
+// for every known ally against every known enemy
+// return list, containing list of Actions for every player;
+QList<Action> Player::makePrefferedActionsList()
+{
+    QList<QList<Action>> actionsOfPlayers;
+    for (Player p: worldModel.getTeamAlly()) {
+        QList<Action> actionsOfPlayer;
+
+        for (Player e: worldModel.getTeamEnemy()) {
+            checkMarking();
+            checkDefendGoal();
+            checkWaitDefensive();
+        }
+
+        actionsOfPlayers.append(actionsOfPlayer);
+    }
+}
+// let every ally determine what action should he execute,
+// based on desirability of action
+// return list, containing list of Actions for every player;
+void Player::determinePrefferedIntention()
+{
+    makePrefferedActionsList();
 }
 
 Player::Team Player::getTeam() const

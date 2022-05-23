@@ -2,8 +2,7 @@
 #define PLAYERWORLDMODEL_H
 
 #include <QVector>
-#include <World.h>
-
+#include "World.h"
 #include "Player.h"
 #include "Ball.h"
 
