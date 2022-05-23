@@ -130,18 +130,18 @@ QList<Action> Player::makePrefferedActionsList()
 {
     /*
     QList<QList<Action>> actionsOfPlayers;
-    for (Player p: worldModel.getTeamAlly()) {
+    for (Player p: worldModel->getTeamAlly()) {
         QList<Action> actionsOfPlayer;
 
-        for (Player e: worldModel.getTeamEnemy()) {
-            checkMarking();
-            checkDefendGoal();
-            checkWaitDefensive();
+        for (Player e: worldModel->getTeamEnemy()) {
+            //checkMarking();
+            //checkDefendGoal();
+            //checkWaitDefensive();
         }
 
         actionsOfPlayers.append(actionsOfPlayer);
     }
-    */
+*/
     return QList<Action>();
 }
 // let every ally determine what action should he execute,

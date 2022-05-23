@@ -1,6 +1,6 @@
 #include "PlayerWorldModel.h"
 
-PlayerWorldModel::PlayerWorldModel(World world, Player _myself)
+PlayerWorldModel::PlayerWorldModel(const World& world, Player* _myself)
 {
     myself = _myself;
     teamAlly = world.getTeamAlly();

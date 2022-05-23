@@ -204,8 +204,8 @@ public:
     AttackerRight(
            double margin = r_PITCH_LENGTH/2.5,
            double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*5,
-           double boxWidth = r_PITCH_WIDTH/4,
+           double boxPos_y = r_PITCH_WIDTH/8*6,
+           double boxWidth = r_PITCH_WIDTH/2,
            double boxLength = r_PITCH_LENGTH/5,
            RoleName Role = RoleName::AttackerRight):
         Attacker(margin, boxPos_x, boxPos_y, boxWidth, boxLength, Role) {}
@@ -217,8 +217,8 @@ public:
     AttackerLeft(
            double margin = r_PITCH_LENGTH/2.5,
            double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*3,
-           double boxWidth = r_PITCH_WIDTH/4,
+           double boxPos_y = r_PITCH_WIDTH/8*2,
+           double boxWidth = r_PITCH_WIDTH/2,
            double boxLength = r_PITCH_LENGTH/5,
            RoleName Role = RoleName::AttackerLeft):
         Attacker(margin, boxPos_x, boxPos_y, boxWidth, boxLength, Role) {}

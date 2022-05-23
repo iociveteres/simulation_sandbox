@@ -9,13 +9,14 @@
 class PlayerWorldModel
 {
 private:
-    Player myself;
+    Player* myself;
+    Ball* ball;
     QVector<Player> teamAlly;
     QVector<Player> teamEnemy;
 
-    Ball* ball;
+
 public:
-    PlayerWorldModel(World world, Player _myself);
+    PlayerWorldModel(const World& world, Player* _myself);
 
     QVector<Player> getTeamAlly() const;
     QVector<Player> getTeamEnemy() const;
