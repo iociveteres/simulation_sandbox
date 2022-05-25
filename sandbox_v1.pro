@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     Action.cpp \
     Ball.cpp \
+    BaseEntity.cpp \
     MainWindow.cpp \
     ModelConstants.cpp \
     Player.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
 HEADERS += \
     Action.h \
     Ball.h \
+    BaseEntity.h \
     MainWindow.h \
     ModelConstants.h \
     Player.h \

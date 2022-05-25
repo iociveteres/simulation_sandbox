@@ -11,13 +11,14 @@
 #include <QCborMap>
 
 #include "Player.h"
+#include "PlayerAI.h"
 #include "Ball.h"
 
 class World : public QObject
 {
     Q_OBJECT
 private:
-    QVector<Player> teamAlly;
+    QVector<PlayerAI> teamAlly;
     QVector<Player> teamEnemy;
 
     Ball* ball;
@@ -40,7 +41,7 @@ public:
     bool saveWorld(World::SaveFormat saveFormat) const;
 
     //World getWorld();
-    QVector<Player> getTeamAlly() const;
+    QVector<PlayerAI> getTeamAlly() const;
     QVector<Player> getTeamEnemy() const;
     Ball *getBall() const;
 

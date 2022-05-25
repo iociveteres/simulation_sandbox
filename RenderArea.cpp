@@ -89,22 +89,22 @@ void RenderArea::drawPlayer(Player player) {
     painter.drawChord(kickableAreaRect, (player.getAngle() + 180) * 16, 180*16);
 }
 
-void RenderArea::drawIntentions(Player player) {
+void RenderArea::drawIntentions(PlayerAI playerAI) {
     QPainter painter(image);
     painter.setWindow(wholeFieldArea);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    QPointF intendedPoint = player.getIntention().getPrefferedPoint();
-    QPointF currentPoint = player.getCoordinatesPoint();
-    QRectF intendedKickableAreaRect = player.getKickableAreaRect();
+    QPointF intendedPoint = playerAI.getIntention().getPrefferedPoint();
+    QPointF currentPoint = playerAI.getCoordinatesPoint();
+    QRectF intendedKickableAreaRect = playerAI.getKickableAreaRect();
 
     painter.setPen(QPen(neutralColor, 0.2));
     painter.setBrush(Qt::NoBrush);
 
-    painter.drawChord(intendedKickableAreaRect, player.getAngle()*16, 180*16);
+    painter.drawChord(intendedKickableAreaRect, playerAI.getAngle()*16, 180*16);
 
     Qt::GlobalColor playerColor;
-    switch (player.getTeam()) {
+    switch (playerAI.getTeam()) {
     case Player::enemy:
         playerColor = enemyColor;
         break;
@@ -115,7 +115,7 @@ void RenderArea::drawIntentions(Player player) {
     painter.setPen(QPen(playerColor, 0.2));
     painter.setBrush(Qt::NoBrush);
 
-    painter.drawChord(intendedKickableAreaRect, (180+player.getAngle())*16, 180*16);
+    painter.drawChord(intendedKickableAreaRect, (180+playerAI.getAngle())*16, 180*16);
 
     painter.setPen(QPen(playerColor, 0.2, Qt::DashLine));
     painter.drawLine(intendedPoint, currentPoint);

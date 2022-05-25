@@ -1,10 +1,5 @@
 #include "Player.h"
 
-Action Player::getIntention() const
-{
-    return intention;
-}
-
 Player::Player()
 {
     playerCount++;
@@ -18,52 +13,16 @@ Player::Player(Team _team)
     playerCount++;
 }
 
-Player::Player(Team _team, int _x, int _y, double _angle)
+Player::Player(Team _team, double _x, double _y, double _angle):
+    BaseEntity(_x, _y, _angle)
 {
     team = _team;
-    x = _x;
-    y = _y;
-    angle = _angle;
     id = playerCount;
     playerCount++;
 }
 
 Player::~Player()
 {
-}
-
-void Player::setRole(PlayerRole role)
-{
-    playerRole = role;
-}
-
-PlayerRole Player::checkRole()
-{
-//    for (PlayerRole r: roles) {
-
-//    }
-    return Goalie();
-}
-
-double Player::getX() {
-    return x;
-}
-
-double Player::getY() {
-    return y;
-}
-
-QPointF Player::getCoordinatesPoint() {
-    return QPointF(x, y);
-}
-
-double Player::getAngle() {
-    return angle;
-}
-
-QVector<PlayerRole> Player::getRoles()
-{
-    return Player::roles;
 }
 
 int Player::getPlayerCount()
@@ -80,14 +39,7 @@ QRectF Player::getKickableAreaRect()
                  r_KICKABLE_AREA, r_KICKABLE_AREA);
 }
 
-QRectF Player::getIntentionsKickableAreaRect()
-{
-    double _x = this->intention.getPrefferedPoint().x();
-    double _y = this->intention.getPrefferedPoint().y();
-    return QRectF(r_PITCH_MARGIN + _x - r_KICKABLE_AREA/2,
-                  r_PITCH_MARGIN + _y - r_KICKABLE_AREA/2,
-                 r_KICKABLE_AREA, r_KICKABLE_AREA);
-}
+
 
 QRectF Player::getPlayerWidgetRect()
 {
@@ -95,6 +47,11 @@ QRectF Player::getPlayerWidgetRect()
                   r_PITCH_MARGIN + y - r_PLAYER_WIDGET_SIZE/2,
                  r_KICKABLE_AREA, r_KICKABLE_AREA);
 
+}
+
+QVector<PlayerRole> Player::getRoles()
+{
+    return Player::roles;
 }
 
 void Player::readJSON(const QJsonObject &json)
@@ -123,34 +80,7 @@ void Player::writeJSON(QJsonObject &json) const
     json["y"] = y;
     json["angle"] = angle;
 }
-// calculate level of desirability for possible actions
-// for every known ally against every known enemy
-// return list, containing list of Actions for every player;
-QList<Action> Player::makePrefferedActionsList()
-{
-    /*
-    QList<QList<Action>> actionsOfPlayers;
-    for (Player p: worldModel->getTeamAlly()) {
-        QList<Action> actionsOfPlayer;
 
-        for (Player e: worldModel->getTeamEnemy()) {
-            //checkMarking();
-            //checkDefendGoal();
-            //checkWaitDefensive();
-        }
-
-        actionsOfPlayers.append(actionsOfPlayer);
-    }
-*/
-    return QList<Action>();
-}
-// let every ally determine what action should he execute,
-// based on desirability of action
-// return list, containing list of Actions for every player;
-void Player::determinePrefferedIntention()
-{
-    makePrefferedActionsList();
-}
 
 Player::Team Player::getTeam() const
 {

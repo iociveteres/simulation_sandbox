@@ -5,7 +5,7 @@ World::World()
 
 }
 
-QVector<Player> World::getTeamAlly() const
+QVector<PlayerAI> World::getTeamAlly() const
 {
     return teamAlly;
 }
@@ -32,7 +32,7 @@ void World::readJSON(const QJsonObject &json)
         teamAlly.reserve(teamAllyArray.size());
         for (int playerIndex = 0; playerIndex < teamAllyArray.size(); ++playerIndex) {
             QJsonObject playerObject = teamAllyArray[playerIndex].toObject();
-            Player player;
+            PlayerAI player;
             player.readJSON(playerObject);
             teamAlly.append(player);
         }
@@ -138,9 +138,9 @@ void World::handlePlayButton()
 
 
 void World::populate() {
-    teamAlly.append(Player(Player::Team::ally, r_PITCH_LENGTH/4, 0, 90));
-    teamAlly.append(Player(Player::Team::ally, r_PITCH_LENGTH/4, r_PITCH_WIDTH/2, 90));
-    teamAlly.append(Player(Player::Team::ally, r_PITCH_LENGTH/4, r_PITCH_WIDTH, 90));
+    teamAlly.append(PlayerAI(Player::Team::ally, r_PITCH_LENGTH/4, 0, 90));
+    teamAlly.append(PlayerAI(Player::Team::ally, r_PITCH_LENGTH/4, r_PITCH_WIDTH/2, 90));
+    teamAlly.append(PlayerAI(Player::Team::ally, r_PITCH_LENGTH/4, r_PITCH_WIDTH, 90));
 
     teamEnemy.append(Player(Player::Team::enemy, r_PITCH_LENGTH/4*3,0, -90));
     teamEnemy.append(Player(Player::Team::enemy, r_PITCH_LENGTH/4*3, r_PITCH_WIDTH/2, -90));

@@ -8,6 +8,7 @@
 #include <QHBoxLayout>
 #include "ModelConstants.h"
 #include "Player.h"
+#include "PlayerAI.h"
 #include "World.h"
 
 class RenderArea : public QWidget
@@ -24,7 +25,7 @@ public:
 
     void DrawCircle();
     void drawPlayer(Player player);
-    void drawIntentions(Player player);
+    void drawIntentions(PlayerAI player);
     void drawField();
     void drawBall(Ball* ball);
     void drawRoleRects(QVector<PlayerRole> roles);
