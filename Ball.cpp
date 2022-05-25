@@ -5,10 +5,10 @@ Ball::Ball()
 
 }
 
-Ball::Ball(double _x, double _y)
+Ball::Ball(double _x, double _y):
+    BaseEntity(_x, _y, 0)
 {
-    x = _x;
-    y = _y;
+
 }
 
 double Ball::getX() const
@@ -20,7 +20,6 @@ double Ball::getY() const
 {
     return y;
 }
-
 
 
 QRectF Ball::getBallRect()

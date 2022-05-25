@@ -3,13 +3,12 @@
 
 #include <QRectF>
 #include <QJsonObject>
+#include "BaseEntity.h"
 #include "ModelConstants.h"
 
-class Ball
+class Ball:
+        public BaseEntity
 {
-private:
-    double x;
-    double y;
 public:
     Ball();
     Ball(double _x, double _y);
