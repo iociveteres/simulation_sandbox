@@ -10,9 +10,10 @@
 #include <QCborValue>
 #include <QCborMap>
 
-#include "Player.h"
-#include "PlayerAI.h"
 #include "Ball.h"
+
+class PlayerAI;
+class Player;
 
 class World : public QObject
 {
@@ -45,7 +46,12 @@ public:
     QVector<Player> getTeamEnemy() const;
     Ball *getBall() const;
 
+    QVector<Player> makePlayerTeamAllyForWorldView() const;
+
     void populate();
+
 };
+
+#include "PlayerAI.h"
 
 #endif // WORLD_H

@@ -3,7 +3,7 @@
 PlayerWorldModel::PlayerWorldModel(const World& world, Player* _myself)
 {
     myself = _myself;
-    teamAlly = world.getTeamAlly();
+    teamAlly = world.makePlayerTeamAllyForWorldView();
     teamEnemy = world.getTeamEnemy();
     ball = world.getBall();
 }
@@ -35,6 +35,10 @@ void PlayerWorldModel::limitVisionDist()
 
 void PlayerWorldModel::limitVisionCone()
 {
+
+}
+
+void PlayerWorldModel::update() {
 
 }
 

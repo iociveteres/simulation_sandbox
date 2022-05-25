@@ -20,6 +20,16 @@ Ball *World::getBall() const
     return ball;
 }
 
+QVector<Player> World::makePlayerTeamAllyForWorldView() const
+{
+    QVector<Player> a;
+
+    for (PlayerAI p: teamAlly) {
+        a.append(Player(p.getTeam(), p.getX(), p.getY(), p.getAngle()));
+    }
+
+    return a;
+}
 
 void World::readJSON(const QJsonObject &json)
 {

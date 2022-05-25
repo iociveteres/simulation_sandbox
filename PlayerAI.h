@@ -2,7 +2,7 @@
 #define PLAYERAI_H
 
 #include "Player.h"
-//#include "PlayerWorldModel.h"
+#include "PlayerWorldModel.h"
 
 class PlayerAI:
         public Player
@@ -11,7 +11,7 @@ class PlayerAI:
 
 private:
     Action intention;
-    //PlayerWorldModel* worldModel;
+    PlayerWorldModel* worldModel;
 
 public:
     PlayerAI();

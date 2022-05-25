@@ -2,9 +2,10 @@
 #define PLAYERWORLDMODEL_H
 
 #include <QVector>
-#include "World.h"
 #include "Player.h"
 #include "Ball.h"
+
+class World;
 
 class PlayerWorldModel
 {
@@ -26,6 +27,9 @@ public:
     void limitVisionDist();
     void limitVisionCone();
 
+    void update();
 };
+
+#include "World.h"
 
 #endif // PLAYERWORLDMODEL_H

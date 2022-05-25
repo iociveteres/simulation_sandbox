@@ -18,6 +18,11 @@ PlayerAI::PlayerAI(Team _team, int _x, int _y, double _angle):
 
 }
 
+PlayerAI::~PlayerAI()
+{
+
+}
+
 Action PlayerAI::getIntention() const
 {
     return intention;
