@@ -1,9 +1,11 @@
 #ifndef PLAYERWORLDMODEL_H
 #define PLAYERWORLDMODEL_H
 
+#include <stdexcept>
 #include <QVector>
 #include "Player.h"
 #include "Ball.h"
+
 
 class World;
 
@@ -23,11 +25,17 @@ public:
     QVector<Player> getTeamEnemy() const;
     Ball *getBall() const;
 
+    Player getEnemyClosestToTheBall();
+    Player getEnemyControllingBall();
+    int getHowManyPlayersAreInArea(QRectF area);
+
     void introduceNoises();
     void limitVisionDist();
     void limitVisionCone();
 
     void update();
+
+
 };
 
 #include "World.h"

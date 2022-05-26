@@ -23,6 +23,49 @@ Ball *PlayerWorldModel::getBall() const
     return ball;
 }
 
+Player PlayerWorldModel::getEnemyClosestToTheBall()
+{
+    double minVal = 10000;
+    Player minPlayer;
+    for (Player e: getTeamEnemy()) {
+        double curVal = distance(e.getCoordinatesPoint(), ball->getCoordinatesPoint());
+        if (curVal < minVal) {
+            minVal = curVal;
+            minPlayer = e;
+        }
+    }
+
+    if (minVal != 10000)
+        return minPlayer;
+    else
+        throw std::runtime_error("Empty enemy team vector");
+
+}
+
+Player PlayerWorldModel::getEnemyControllingBall()
+{
+    Player p = getEnemyClosestToTheBall();
+
+    if (distance(p.getCoordinatesPoint(), ball->getCoordinatesPoint())
+            <= r_KICKABLE_AREA + 1)
+        return p;
+    else
+        throw std::runtime_error("No enemy controlling ball");
+}
+
+int PlayerWorldModel::getHowManyPlayersAreInArea(QRectF area)
+{
+    int count = 0;
+
+
+    for (Player a: getTeamAlly()) {
+        if (area.contains(a.getCoordinatesPoint()))
+            count++;
+    }
+
+    return count;
+}
+
 void PlayerWorldModel::introduceNoises()
 {
 
