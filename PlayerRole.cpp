@@ -25,3 +25,8 @@ QPointF PlayerRole::getRolePoint()
     return QPointF(r_PITCH_MARGIN + boxPos_x + roleMargin, r_PITCH_MARGIN + boxPos_y);
 }
 
+double PlayerRole::getRoleMargin() const
+{
+    return roleMargin;
+}
+

@@ -28,6 +28,7 @@ public:
     RoleName getPlayerRole() const;
     QRectF  getRoleRect();
     QPointF getRolePoint();
+    double getRoleMargin() const;
 
 private:
     double roleMargin;
