@@ -1,5 +1,10 @@
 #include "PlayerAI.h"
 
+double PlayerAI::getRoleMargin() const
+{
+    return roleMargin;
+}
+
 PlayerAI::PlayerAI():
     Player()
 {
@@ -56,20 +61,20 @@ QRectF PlayerAI::getIntentionsKickableAreaRect()
 // return list, containing list of Actions for every player;
 QList<Action> PlayerAI::makePrefferedActionsList()
 {
-    /*
+
     QList<QList<Action>> actionsOfPlayers;
     for (Player p: worldModel->getTeamAlly()) {
         QList<Action> actionsOfPlayer;
 
         for (Player e: worldModel->getTeamEnemy()) {
-            //checkMarking();
-            //checkDefendGoal();
-            //checkWaitDefensive();
+            checkMarking(e);
+            checkDefendGoal(e);
+            checkWaitDefensive(e);
         }
 
         actionsOfPlayers.append(actionsOfPlayer);
     }
-*/
+
     return QList<Action>();
 }
 // let every ally determine what action should he execute,
@@ -79,3 +84,73 @@ void PlayerAI::determinePrefferedIntention()
 {
     makePrefferedActionsList();
 }
+
+Action PlayerAI::checkMarking(Player enemy)
+{
+    const double a = 1;
+    const double b = 1;
+    const double c = 1;
+    double distBtwEnemyAndBall =
+            distance(enemy.getCoordinatesPoint(),
+                     worldModel->getBall()->getCoordinatesPoint());
+    double distBtwEnemyAndMe =
+            distance(enemy.getCoordinatesPoint(),
+                     this->getCoordinatesPoint());
+    double distBtwEnemyAndDefensiveLine = enemy.getX() - getRoleMargin();
+
+    double desirebility =
+            a * distBtwEnemyAndBall +
+            b * distBtwEnemyAndMe +
+            c * distBtwEnemyAndDefensiveLine;
+
+    return Action();
+}
+
+Action PlayerAI::checkDefendGoal(Player enemy)
+{
+    const double a = 1;
+    const double b = 1;
+    const double c = 1;
+
+    double distBtwGoalAndBall =
+            distance(QPointF(r_PITCH_MARGIN, r_TOTAL_FIELD_WIDTH/2),
+                     worldModel->getBall()->getCoordinatesPoint());
+
+    double ballIsControlledByEnemy;
+    try {
+        worldModel->getEnemyControllingBall();
+        ballIsControlledByEnemy = 20;
+    }  catch (std::runtime_error const &e) {
+        //std::string s = e.what();
+        ballIsControlledByEnemy = 0;
+    }
+
+    const QRectF defendGoalArea = QRectF(r_PITCH_MARGIN + r_GOAL_AREA_LENGTH + 0.5,
+                                         r_PITCH_MARGIN + r_PITCH_WIDTH/3,
+                                         4,
+                                         r_PITCH_WIDTH/3);
+
+    double lessThan2AlliesDefendGoal;
+    int howManyDefend = worldModel->getHowManyPlayersAreInArea(defendGoalArea);
+    if (howManyDefend < 2) {
+        lessThan2AlliesDefendGoal = 20;
+    } else {
+        lessThan2AlliesDefendGoal = 0;
+    }
+
+    double desirebility =
+            a * 1/distBtwGoalAndBall +
+            b * ballIsControlledByEnemy +
+            c * lessThan2AlliesDefendGoal;
+
+
+    return Action();
+}
+
+Action PlayerAI::checkWaitDefensive(Player enemy)
+{
+    double desirebility = 25;
+    return Action();
+}
+
+

@@ -3,6 +3,7 @@
 
 #include "Player.h"
 #include "PlayerWorldModel.h"
+#include "Geometry.h"
 
 class PlayerAI:
         public Player
@@ -10,6 +11,7 @@ class PlayerAI:
     Q_GADGET;
 
 private:
+    double roleMargin;
     Action intention;
     PlayerWorldModel* worldModel;
 
@@ -29,11 +31,12 @@ public:
     QList<Action> makePrefferedActionsList();
     void determinePrefferedIntention();
 
-    double checkMarking(Player enemy);
-    double checkDefendGoal(Player enemy);
-    double checkWaitDefensive(Player enemy);
+    Action checkMarking(Player enemy);
+    Action checkDefendGoal(Player enemy);
+    Action checkWaitDefensive(Player enemy);
 
     Action getIntention() const;
+    double getRoleMargin() const;
 
 private:
     Team team;
