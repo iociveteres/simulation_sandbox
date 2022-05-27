@@ -53,6 +53,26 @@ Player PlayerWorldModel::getEnemyControllingBall()
         throw std::runtime_error("No enemy controlling ball");
 }
 
+Player PlayerWorldModel::getEnemyById(int id)
+{
+    for (Player e: teamEnemy) {
+        if (id == e.getId()) {
+            return e;
+        }
+    }
+    return Player();
+}
+
+Player PlayerWorldModel::getAllyById(int id)
+{
+    for (Player a: teamAlly) {
+        if (id == a.getId()) {
+            return a;
+        }
+    }
+    return Player();
+}
+
 int PlayerWorldModel::getHowManyPlayersAreInArea(QRectF area)
 {
     int count = 0;

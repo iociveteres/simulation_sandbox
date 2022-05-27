@@ -15,8 +15,14 @@ public:
 
     Action();
     Action(ActionType _actionType, int _executorId, int _againstId);
-    PrefferedPoint getPrefferedPoint() const;
     bool operator==(const Action &rhs) const;
+
+    PrefferedPoint getPrefferedPoint() const;
+    int getExecutorId() const;
+    int getAgainstId() const;
+
+    void setPrefferedPoint(const PrefferedPoint &value);
+
 
 private:
     ActionType actionType;

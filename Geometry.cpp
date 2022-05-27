@@ -1,5 +1,9 @@
 #include "Geometry.h"
 
+#include <QPainterPath>
+#include <algorithm>
+#include <array>
+
 double distance(QPointF a, QPointF b)
 {
     return sqrt(pow(b.x() - a.x(), 2)+pow(b.y() - a.y(), 2));
@@ -14,3 +18,66 @@ double distanceLineAndPoint(QLineF l, QPointF p) {
     return abs((l.x2()-l.x1())*(l.y1()-p.y())-(l.x1()-p.x())*(l.y2()-l.y1()))
             /sqrt(pow(l.x2()-l.x1(), 2) + pow(l.y2()-l.y1(),2));
 }
+
+// https://stackoverflow.com/questions/6091728/line-segment-circle-intersection
+// Distance is mesuared from point a
+// This can be interpreted as finding intersection of segment
+// and circle of radius of dist
+QPointF findPointInDistFromEndOfSegment(QPointF a, QPointF b, double dist) {
+    double m = (b.y()-a.y())/(b.x()-a.x());
+    double x = a.x() + dist/sqrt(1+pow(m, 2));
+    double y = a.y() + dist/sqrt(1+1/pow(m, 2));
+    return QPointF(x, y);
+
+}
+// https://stackoverflow.com/questions/49968720/find-tangent-points-in-a-circle-from-a-point
+std::tuple<QPointF, QPointF> getTangentPointsFromLineAndCircle(QPointF p, QPointF c, double r) {
+    double b = sqrt(pow(p.x() - c.x(),2) + pow(p.y()-c.y(),2));
+    double th = acos(r/b);
+    double d = atan2(p.y()-c.y(), p.x()-c.x());
+    double d1 = d + th;
+    double d2 = d - th;
+    return std::make_tuple(
+                QPointF(c.x()+r*cos(d1), c.y()+r*sin(d1)),
+                QPointF(c.x()+r*cos(d2), c.y()+r*sin(d2)));
+}
+
+// https://en.wikipedia.org/wiki/Line–line_intersection#Given_two_points_on_each_line
+QPointF intersectTwoLines(QPointF A, QPointF B, QPointF C, QPointF D) {
+    double denominator = (A.x()-B.x())*(C.y()-D.y()) - (A.y()-B.y())*(C.x()-D.x());
+    double x = ((A.x()*B.y() - A.y()*B.x()) * (C.x() - D.x())
+                - (A.x() - B.x()) * (C.x()*D.y() - C.y()*D.x()))
+                / denominator;
+    double y = ((A.x()*B.y() - A.y()*B.x()) * (C.y() - D.y())
+                - (A.y() - B.y()) * (C.x()*D.y() - C.y()*D.x()))
+                / denominator;
+    return QPointF(x, y);
+}
+
+bool cmpYQPointF(const QPointF &a, const QPointF &b) {
+    return (a.y() < b.y());
+}
+
+// first tries two fit second
+// A.y should be < B.y, C.y should be < D.y
+double howGoodTwoLinesFit(QPointF A, QPointF B, QPointF C, QPointF D) {
+//    std::array<QPointF, 4> a;
+//    a[0] = A; a[1] = B; a[2] = C; a[3] = D;
+//    std::sort(a.begin(), a.end(), cmpYQPointF);
+    double first, second;
+    if (A.y() < C.y())
+        first = C.y();
+    else
+        first = A.y();
+
+    if (B.y() < D.y())
+        second = B.y();
+    else
+        second = D.y();
+
+    double length = distance(C, D);
+    double coverage = (second - first)/length;
+
+    return coverage;
+}
+

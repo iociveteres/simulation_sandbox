@@ -19,3 +19,18 @@ bool Action::operator==(const Action &rhs) const
         return false;
     return true;
 }
+
+void Action::setPrefferedPoint(const PrefferedPoint &value)
+{
+    prefferedPoint = value;
+}
+
+int Action::getExecutorId() const
+{
+    return executorId;
+}
+
+int Action::getAgainstId() const
+{
+    return againstId;
+}

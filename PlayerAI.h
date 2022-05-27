@@ -27,6 +27,8 @@ public:
     QRectF getIntentionsKickableAreaRect();
 
     static int getPlayerCount();
+    Action getIntention() const;
+    double getRoleMargin() const;
 
     QList<Action> makePrefferedActionsList();
     void determinePrefferedIntention();
@@ -35,9 +37,8 @@ public:
     Action checkDefendGoal(Player enemy);
     Action checkWaitDefensive(Player enemy);
 
-    Action getIntention() const;
-    double getRoleMargin() const;
 
+    QPointF getPointMarking(Action a);
 private:
     Team team;
 };

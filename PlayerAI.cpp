@@ -1,5 +1,7 @@
 #include "PlayerAI.h"
 
+double MarkingDist = 4;
+
 double PlayerAI::getRoleMargin() const
 {
     return roleMargin;
@@ -151,6 +153,20 @@ Action PlayerAI::checkWaitDefensive(Player enemy)
 {
     double desirebility = 25;
     return Action();
+}
+
+
+QPointF PlayerAI::getPointMarking(Action a) {
+//    QPointF executorPos = worldModel->
+//            getAllyById(a.getExecutorId()).
+//            getCoordinatesPoint();
+    QPointF ballPos = worldModel->
+            getBall()->
+            getCoordinatesPoint();
+    QPointF againstPos = worldModel->
+            getEnemyById(a.getAgainstId()).
+            getCoordinatesPoint();
+    return findPointInDistFromEndOfSegment(againstPos, ballPos, MarkingDist);
 }
 
 
