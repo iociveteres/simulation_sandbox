@@ -3,6 +3,8 @@
 
 #include "PrefferedPoint.h"
 
+
+
 class Action
 {
 
@@ -14,21 +16,22 @@ public:
     };
 
     Action();
-    Action(ActionType _actionType, int _executorId, int _againstId);
+    Action(ActionType _actionType, int _executorId, int _againstId, double _desirebility);
     bool operator==(const Action &rhs) const;
 
-    PrefferedPoint getPrefferedPoint() const;
+    QPointF getPrefferedPoint() const;
     int getExecutorId() const;
     int getAgainstId() const;
 
-    void setPrefferedPoint(const PrefferedPoint &value);
+    void setPrefferedPoint(const QPointF &value);
 
 
+    const static int NoEnemyCode = -1000;
 private:
     ActionType actionType;
     int executorId;
     int againstId;
-    PrefferedPoint prefferedPoint;
+    QPointF prefferedPoint;
 
     double desirebility;
 };

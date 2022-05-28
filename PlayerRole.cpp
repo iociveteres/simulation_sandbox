@@ -17,16 +17,29 @@ PlayerRole::PlayerRole(double _margin, double _boxPos_x, double _boxPos_Y, doubl
 
 QRectF PlayerRole::getRoleRect()
 {
-    return QRectF(r_PITCH_MARGIN + boxPos_x - boxLength/2 + roleMargin, r_PITCH_MARGIN + boxPos_y - boxWidth/2, boxLength, boxWidth);
+    return QRectF(r_PITCH_MARGIN + boxPos_x - boxLength/2 + roleMargin + marginFromGoal,
+                  r_PITCH_MARGIN + boxPos_y - boxWidth/2,
+                  boxLength, boxWidth);
 }
 
 QPointF PlayerRole::getRolePoint()
 {
-    return QPointF(r_PITCH_MARGIN + boxPos_x + roleMargin, r_PITCH_MARGIN + boxPos_y);
+    return QPointF(r_PITCH_MARGIN + boxPos_x + roleMargin + marginFromGoal,
+                   r_PITCH_MARGIN + boxPos_y);
 }
 
 double PlayerRole::getRoleMargin() const
 {
     return roleMargin;
+}
+
+double PlayerRole::getMarginFromGoal() const
+{
+    return marginFromGoal;
+}
+
+void PlayerRole::setMarginFromGoal(double value)
+{
+    marginFromGoal = value;
 }
 

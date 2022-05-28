@@ -39,6 +39,24 @@ Player PlayerWorldModel::getEnemyClosestToTheBall()
         return minPlayer;
     else
         throw std::runtime_error("Empty enemy team vector");
+}
+
+Player PlayerWorldModel::getAllyClosestToThePoint(QPointF p)
+{
+    double minVal = 10000;
+    Player minPlayer;
+    for (Player a: getTeamAlly()) {
+        double curVal = distance(a.getCoordinatesPoint(), p);
+        if (curVal < minVal) {
+            minVal = curVal;
+            minPlayer = a;
+        }
+    }
+
+    if (minVal != 10000)
+        return minPlayer;
+    else
+        throw std::runtime_error("Empty ally team vector");
 
 }
 

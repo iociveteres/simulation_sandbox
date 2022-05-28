@@ -30,7 +30,11 @@ public:
     QPointF getRolePoint();
     double getRoleMargin() const;
 
+    double getMarginFromGoal() const;
+    void setMarginFromGoal(double value);
+
 private:
+    double marginFromGoal = 0;
     double roleMargin;
     double boxPos_x;
     double boxPos_y;

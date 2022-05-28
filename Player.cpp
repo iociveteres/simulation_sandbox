@@ -1,5 +1,15 @@
 #include "Player.h"
 
+int Player::getId() const
+{
+    return id;
+}
+
+PlayerRole Player::getPlayerRole() const
+{
+    return playerRole;
+}
+
 Player::Player()
 {
     playerCount++;

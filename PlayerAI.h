@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "PlayerWorldModel.h"
 #include "Geometry.h"
+#include <tuple>
 
 class PlayerAI:
         public Player
@@ -30,15 +31,19 @@ public:
     Action getIntention() const;
     double getRoleMargin() const;
 
-    QList<Action> makePrefferedActionsList();
+    QList<QList<Action> > makePrefferedActionsList();
     void determinePrefferedIntention();
 
     Action checkMarking(Player enemy);
-    Action checkDefendGoal(Player enemy);
-    Action checkWaitDefensive(Player enemy);
+    Action checkDefendGoal();
+    Action checkWaitDefensive();
 
 
     QPointF getPointMarking(Action a);
+    std::tuple<QPointF, QPointF> getPointsDefendGoal(Action a);
+    double getGoalCoverageRatingFromPlayerPos(QPointF playerPos);
+    QPointF getPointWait(Action a);
+    double calcRoleMarginFromGoal();
 private:
     Team team;
 };

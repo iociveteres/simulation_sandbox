@@ -36,12 +36,17 @@ public:
     QRectF getKickableAreaRect();
     QRectF getIntentionsKickableAreaRect();
     QRectF getPlayerWidgetRect();
+    PlayerRole getPlayerRole() const;
     Player::Team getTeam() const;
     static int getPlayerCount();
 
     void readJSON(const QJsonObject &json);
     void writeJSON(QJsonObject &json) const;
     static QVector<PlayerRole> getRoles();
+    int getId() const;
+
+
+
 protected:
     Team team;
 };

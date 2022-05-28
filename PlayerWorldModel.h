@@ -27,6 +27,11 @@ public:
 
     Player getEnemyClosestToTheBall();
     Player getEnemyControllingBall();
+    Player getAllyClosestToThePoint(QPointF p);
+
+    Player getEnemyById(int id);
+    Player getAllyById(int id);
+
     int getHowManyPlayersAreInArea(QRectF area);
 
     void introduceNoises();

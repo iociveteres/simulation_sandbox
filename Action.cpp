@@ -5,22 +5,36 @@ Action::Action()
 
 }
 
-PrefferedPoint Action::getPrefferedPoint() const
+Action::Action(ActionType _actionType, int _executorId, int _againstId, double _desirebility)
 {
-    return prefferedPoint;
+    actionType = _actionType;
+    executorId = _executorId;
+    againstId = _againstId;
+    desirebility = _desirebility;
 }
+
 // check that two same actions are intended against same opponent
 // player, point and desirebility may be different by design
 bool Action::operator==(const Action &rhs) const
 {
+    if (actionType == ActionType::DefendGoal)
+        if (getPrefferedPoint() != rhs.getPrefferedPoint())
+            return false;
     if (actionType != rhs.actionType)
         return false;
-    if (againstId != rhs.actionType)
-        return false;
+    if (againstId != -1000)
+        if (againstId != rhs.againstId)
+            return false;
+
     return true;
 }
 
-void Action::setPrefferedPoint(const PrefferedPoint &value)
+QPointF Action::getPrefferedPoint() const
+{
+    return prefferedPoint;
+}
+
+void Action::setPrefferedPoint(const QPointF &value)
 {
     prefferedPoint = value;
 }

@@ -8,5 +8,9 @@
 double distance(QPointF a, QPointF b);
 double distance(double ax, double ay, double bx, double by);
 double distanceLineAndPoint(QLineF l, QPointF p);
+QPointF findPointInDistFromEndOfSegment(QPointF a, QPointF b, double dist);
+std::tuple<QPointF, QPointF> getTangentPointsFromLineAndCircle(QPointF p, QPointF c, double r);
+QPointF intersectTwoLines(QPointF A, QPointF B, QPointF C, QPointF D);
+double howGoodTwoLinesFit(QPointF A, QPointF B, QPointF C, QPointF D);
 
 #endif // GEOMETRY_H

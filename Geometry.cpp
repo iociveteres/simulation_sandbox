@@ -54,16 +54,7 @@ QPointF intersectTwoLines(QPointF A, QPointF B, QPointF C, QPointF D) {
     return QPointF(x, y);
 }
 
-bool cmpYQPointF(const QPointF &a, const QPointF &b) {
-    return (a.y() < b.y());
-}
-
-// first tries two fit second
-// A.y should be < B.y, C.y should be < D.y
 double howGoodTwoLinesFit(QPointF A, QPointF B, QPointF C, QPointF D) {
-//    std::array<QPointF, 4> a;
-//    a[0] = A; a[1] = B; a[2] = C; a[3] = D;
-//    std::sort(a.begin(), a.end(), cmpYQPointF);
     double first, second;
     if (A.y() < C.y())
         first = C.y();
