@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QCheckBox>
+#include <QComboBox>
 #include "World.h"
 #include "RenderArea.h"
 
@@ -13,6 +15,7 @@ class MainWindow
 private:
     RenderArea* render;
     World* world;
+    QComboBox* choosePlayerPersperctiveComboBox;
 
 private slots:
     void handleLoadButton();

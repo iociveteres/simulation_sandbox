@@ -13,11 +13,24 @@ MainWindow::MainWindow(QWidget *parent, World* _world)
     // right side interface layout
     QVBoxLayout* interfaceLayout = new QVBoxLayout(this);
 
+    QVBoxLayout* buttonLayout = new QVBoxLayout(this);
     QPushButton* loadButton = new QPushButton("Открыть", this);
-    interfaceLayout->addWidget(loadButton);
+    buttonLayout->addWidget(loadButton);
     QPushButton* playButton = new QPushButton("Просчитать", this);
-    interfaceLayout->addWidget(playButton);
+    buttonLayout->addWidget(playButton);
+    choosePlayerPersperctiveComboBox = new QComboBox(this);
 
+    interfaceLayout->addLayout(buttonLayout);
+
+    QVBoxLayout* checkboxLayout = new QVBoxLayout(this);
+    QCheckBox* drawRoleRectsCheckbox = new QCheckBox("Зоны ролей", this);
+    checkboxLayout->addWidget(drawRoleRectsCheckbox);
+    QCheckBox* drawGoalDefendPositionsCheckbox = new QCheckBox("Точки защиты ворот", this);
+    checkboxLayout->addWidget(drawGoalDefendPositionsCheckbox);
+    QCheckBox* drawTangentLinesCheckbox = new QCheckBox("Касательные от мяча", this);
+    checkboxLayout->addWidget(drawTangentLinesCheckbox);
+
+    interfaceLayout->addLayout(checkboxLayout);
     // assemble window layout
     layout->addLayout(interfaceLayout);
     setLayout(layout);
@@ -44,5 +57,10 @@ void MainWindow::handleLoadButton()
         fileNames = dialog.selectedFiles();
 
     world->loadWorld(World::Json, fileNames.at(0));
+
+    int i = 0;
+    for (Player a: world->getTeamAlly()) {
+        choosePlayerPersperctiveComboBox->addItem(QString("Игрок ") + QString(i));
+    }
     render->update();
 }

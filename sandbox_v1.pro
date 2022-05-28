@@ -13,6 +13,7 @@ SOURCES += \
     Ball.cpp \
     BaseEntity.cpp \
     Geometry.cpp \
+    Globals.cpp \
     MainWindow.cpp \
     ModelConstants.cpp \
     Player.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     Ball.h \
     BaseEntity.h \
     Geometry.h \
+    Globals.h \
     MainWindow.h \
     ModelConstants.h \
     Player.h \
