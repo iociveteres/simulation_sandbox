@@ -17,7 +17,7 @@ class Player:
     Q_GADGET;
 
 protected:
-    static const QVector<PlayerRole> roles;
+    static const QVector<PlayerRole> defaultFormation;
     PlayerRole playerRole;
     PlayerRole::RoleName assignedRole = PlayerRole::RoleName::Unassigned;
 
@@ -36,16 +36,18 @@ public:
     QRectF getKickableAreaRect();
     QRectF getIntentionsKickableAreaRect();
     QRectF getPlayerWidgetRect();
-    PlayerRole getPlayerRole() const;
     Player::Team getTeam() const;
     static int getPlayerCount();
+
+    PlayerRole getPlayerRole() const;
+    void setPlayerRole(const PlayerRole &value);
 
     void readJSON(const QJsonObject &json);
     void writeJSON(QJsonObject &json) const;
     static QVector<PlayerRole> getRoles();
     int getId() const;
 
-
+    static QVector<PlayerRole> getDefaultFormation();
 
 protected:
     Team team;

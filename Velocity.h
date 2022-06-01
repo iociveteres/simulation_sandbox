@@ -11,4 +11,12 @@ public:
     Velocity();
 };
 
+class Acceleration
+{
+private:
+    double x;
+    double y;
+public:
+    Acceleration();
+};
 #endif // VELOCITY_H

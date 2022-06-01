@@ -10,6 +10,11 @@ PlayerRole Player::getPlayerRole() const
     return playerRole;
 }
 
+void Player::setPlayerRole(const PlayerRole &value)
+{
+    playerRole = value;
+}
+
 Player::Player()
 {
     playerCount++;
@@ -44,24 +49,24 @@ int Player::getPlayerCount()
 
 QRectF Player::getKickableAreaRect()
 {
-    return QRectF(r_PITCH_MARGIN + x - r_KICKABLE_AREA/2,
-                  r_PITCH_MARGIN + y - r_KICKABLE_AREA/2,
-                 r_KICKABLE_AREA, r_KICKABLE_AREA);
+    return QRectF(PITCH_MARGIN + x - KICKABLE_AREA/2,
+                  PITCH_MARGIN + y - KICKABLE_AREA/2,
+                 KICKABLE_AREA, KICKABLE_AREA);
 }
 
 
 
 QRectF Player::getPlayerWidgetRect()
 {
-    return QRectF(r_PITCH_MARGIN + x - r_PLAYER_WIDGET_SIZE/2,
-                  r_PITCH_MARGIN + y - r_PLAYER_WIDGET_SIZE/2,
-                 r_KICKABLE_AREA, r_KICKABLE_AREA);
+    return QRectF(PITCH_MARGIN + x - PLAYER_WIDGET_SIZE/2,
+                  PITCH_MARGIN + y - PLAYER_WIDGET_SIZE/2,
+                 KICKABLE_AREA, KICKABLE_AREA);
 
 }
 
-QVector<PlayerRole> Player::getRoles()
+QVector<PlayerRole> Player::getDefaultFormation()
 {
-    return Player::roles;
+    return Player::defaultFormation;
 }
 
 void Player::readJSON(const QJsonObject &json)
@@ -97,6 +102,16 @@ Player::Team Player::getTeam() const
     return team;
 }
 
+QPointF Player::getDefaultRolePosition(PlayerRole::RoleName roleName) const
+{
+    for (PlayerRole r: getDefaultFormation()) {
+        if (roleName == r.getRoleName())
+            return r.getRolePoint();
+    }
+    // impossible since there are all possible roles in default formation
+    return QPointF(0, 0);
+}
+
 QVector<PlayerRole> getRolesVec() {
     QVector<PlayerRole> roles;
     //roles.append(Goalie());
@@ -114,6 +129,33 @@ QVector<PlayerRole> getRolesVec() {
     return roles;
 }
 
+void Player::tick()
+{
+    velocity.x += acceleration.x;
+    velocity.y += acceleration.y;
+
+    this->x += velocity.x;
+    this->y += velocity.y;
+
+    velocity.x *= PLAYER_DECAY;
+    velocity.y *= PLAYER_DECAY;
+
+    acceleration.x = 0;
+    acceleration.y = 0;
+
+    double velocityAbs = vectorLength(velocity.x, velocity.y);
+    if (velocityAbs > PLAYER_SPEED_MAX) {
+        velocity.x /= (velocityAbs / PLAYER_SPEED_MAX);
+        velocity.y /= (velocityAbs / PLAYER_SPEED_MAX);
+    }
+
+    double accelerationAbs = vectorLength(velocity.x, velocity.y);
+    if (accelerationAbs > PLAYER_SPEED_MAX) {
+        acceleration.x /= (accelerationAbs / PLAYER_SPEED_MAX);
+        acceleration.y /= (accelerationAbs / PLAYER_SPEED_MAX);
+    }
+}
+
 // initialise static
-const QVector<PlayerRole> Player::roles = getRolesVec();
+const QVector<PlayerRole> Player::defaultFormation = getRolesVec();
 int Player::playerCount = 0;

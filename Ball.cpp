@@ -24,8 +24,8 @@ double Ball::getY() const
 
 QRectF Ball::getBallRect()
 {
-    return QRectF(r_PITCH_MARGIN + x - r_BALL_SIZE, r_PITCH_MARGIN + y - r_BALL_SIZE / 2,
-                 r_BALL_SIZE, r_BALL_SIZE);
+    return QRectF(PITCH_MARGIN + x - BALL_WIDGET_SIZE, PITCH_MARGIN + y - BALL_WIDGET_SIZE / 2,
+                 BALL_WIDGET_SIZE, BALL_WIDGET_SIZE);
 }
 
 void Ball::readJSON(const QJsonObject &json)
@@ -35,6 +35,33 @@ void Ball::readJSON(const QJsonObject &json)
 
     if (json.contains("y") && json["y"].isDouble())
         y = json["y"].toDouble();
+}
+
+void Ball::tick()
+{
+    velocity.x += acceleration.x;
+    velocity.y += acceleration.y;
+
+    this->x += velocity.x;
+    this->y += velocity.y;
+
+    velocity.x *= BALL_DECAY;
+    velocity.y *= BALL_DECAY;
+
+    acceleration.x = 0;
+    acceleration.y = 0;
+
+    double velocityAbs = vectorLength(velocity.x, velocity.y);
+    if (velocityAbs > PLAYER_SPEED_MAX) {
+        velocity.x /= (velocityAbs / PLAYER_SPEED_MAX);
+        velocity.y /= (velocityAbs / PLAYER_SPEED_MAX);
+    }
+
+    double accelerationAbs = vectorLength(acceleration.x, acceleration.y);
+    if (accelerationAbs > PLAYER_SPEED_MAX) {
+        acceleration.x /= (accelerationAbs / PLAYER_SPEED_MAX);
+        acceleration.y /= (accelerationAbs / PLAYER_SPEED_MAX);
+    }
 }
 
 void Ball::writeJSON(QJsonObject &json) const

@@ -4,6 +4,14 @@
 #include <algorithm>
 #include <array>
 
+double limit(double value, double top, double bot) {
+    if (value >= top)
+        return top;
+    if (value <= bot)
+        return bot;
+    return value;
+}
+
 double distance(QPointF a, QPointF b)
 {
     return sqrt(pow(b.x() - a.x(), 2)+pow(b.y() - a.y(), 2));

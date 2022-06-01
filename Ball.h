@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include "BaseEntity.h"
 #include "ModelConstants.h"
+#include "Geometry.h"
 
 class Ball:
         public BaseEntity
@@ -17,6 +18,8 @@ public:
     QRectF getBallRect();
     void writeJSON(QJsonObject &json) const;
     void readJSON(const QJsonObject &json);
+
+    void tick();
 };
 
 #endif // BALL_H
