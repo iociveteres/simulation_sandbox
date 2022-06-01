@@ -46,7 +46,7 @@ public:
     QVector<Player> getTeamEnemy() const;
     Ball *getBall() const;
 
-    QVector<Player> makePlayerTeamAllyForWorldView() const;
+    QVector<Player> makePlayerTeamAllyForWorldView(PlayerAI forPlayer) const;
 
     void populate();
 

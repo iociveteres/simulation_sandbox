@@ -22,6 +22,8 @@ public:
     PlayerAI(Team _team, int _x, int _y, double _angle);
     ~PlayerAI();
 
+    void cycle();
+
     void setRole(PlayerRole role); // set role
     PlayerRole checkRole(); // check role based on position
 
@@ -31,19 +33,25 @@ public:
     Action getIntention() const;
     double getRoleMargin() const;
 
-    QList<QList<Action> > makePrefferedActionsList();
-    void determinePrefferedIntention();
+    QList<Action> makePrefferedActionsListOthers();
+    QList<Action> makePrefferedActionsListMe();
+    QList<Action> makePrefferedActionsListNeighbours();
+    Action determinePrefferedIntention();
 
     Action checkMarking(Player enemy);
     Action checkDefendGoal();
+    Action checkIntercept();
     Action checkWaitDefensive();
 
 
     QPointF getPointMarking(Action a);
-    std::tuple<QPointF, QPointF> getPointsDefendGoal(Action a);
+    QRectF findDefendGoalArea();
     double getGoalCoverageRatingFromPlayerPos(QPointF playerPos);
-    QPointF getPointWait(Action a);
+    std::tuple<QPointF, QPointF> getPointsDefendGoal(Action a);
+    QPointF getPointIntercept();
+    QPointF getPointWait();
     double calcRoleMarginFromGoal();
+    bool checkAllyIsInPlace(PlayerRole::RoleName roleName);
 private:
     Team team;
 };

@@ -2,7 +2,7 @@
 #define PREFFEREDPOINT_H
 
 #include <QPointF>
-
+// needed to overload equal sign
 class PrefferedPoint : public QPointF
 {
     //using QPointF::QPointF;

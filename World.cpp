@@ -20,11 +20,13 @@ Ball *World::getBall() const
     return ball;
 }
 
-QVector<Player> World::makePlayerTeamAllyForWorldView() const
+QVector<Player> World::makePlayerTeamAllyForWorldView(PlayerAI forPlayer) const
 {
     QVector<Player> a;
 
     for (PlayerAI p: teamAlly) {
+        if (forPlayer.getId() == p.getId())
+            continue;
         a.append(Player(p.getTeam(), p.getX(), p.getY(), p.getAngle()));
     }
 

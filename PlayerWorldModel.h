@@ -16,7 +16,7 @@ private:
     Ball* ball;
     QVector<Player> teamAlly;
     QVector<Player> teamEnemy;
-
+    QVector<PlayerRole> formation;
 
 public:
     PlayerWorldModel(const World& world, Player* _myself);
@@ -31,15 +31,18 @@ public:
 
     Player getEnemyById(int id);
     Player getAllyById(int id);
+    Player getAllyByRoleName(PlayerRole::RoleName roleName);
+    PlayerRole getPlayerRoleByRoleName(PlayerRole::RoleName  roleName);
 
     int getHowManyPlayersAreInArea(QRectF area);
+
+    void determineFormation();
 
     void introduceNoises();
     void limitVisionDist();
     void limitVisionCone();
 
     void update();
-
 
 };
 
