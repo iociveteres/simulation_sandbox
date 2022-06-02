@@ -15,6 +15,11 @@ void Player::setPlayerRole(const PlayerRole &value)
     playerRole = value;
 }
 
+PlayerRole::RoleName Player::getAssignedRole() const
+{
+    return assignedRole;
+}
+
 Player::Player()
 {
     int a;
@@ -56,6 +61,7 @@ Player::Player(const Player &p): BaseEntity(p)
     x = p.x;
     y = p.y;
     angle = p.angle;
+    assignedRole = p.assignedRole;
     playerRole = p.playerRole;
     team = p.team;
     id = p.id;
@@ -124,6 +130,12 @@ QRectF Player::getKickableAreaRect()
                  KICKABLE_AREA, KICKABLE_AREA);
 }
 
+QRectF Player::getKickableAreaRect(QPointF pos)
+{
+    return QRectF(PITCH_MARGIN + pos.x() - KICKABLE_AREA/2,
+                  PITCH_MARGIN + pos.y() - KICKABLE_AREA/2,
+                 KICKABLE_AREA, KICKABLE_AREA);
+}
 
 
 QRectF Player::getPlayerWidgetRect()
@@ -235,3 +247,4 @@ void Player::tick()
 // initialise static
 const QVector<PlayerRole> Player::defaultFormation = getRolesVec();
 int Player::playerCount = 0;
+std::map<int, PlayerRole::RoleName> Player::player_roleMap;

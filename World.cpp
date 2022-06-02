@@ -45,7 +45,8 @@ void World::readJSON(const QJsonObject &json)
 {
 //    if (json.contains("name") && json["name"].isString())
 //        mName = json["name"].toString();
-
+    Player p;
+    p.player_roleMap.clear();
     if (json.contains("teamAlly") && json["teamAlly"].isArray()) {
         QJsonArray teamAllyArray = json["teamAlly"].toArray();
         teamAlly.clear();
@@ -56,7 +57,9 @@ void World::readJSON(const QJsonObject &json)
             player.readJSON(playerObject);
             player.choosePlayerRole();
             teamAlly.append(player);
+            p.player_roleMap[player.getId()] = player.getAssignedRole();
         }
+
     }
     if (json.contains("teamEnemy") && json["teamEnemy"].isArray()) {
         QJsonArray teamEnemyArray = json["teamEnemy"].toArray();
@@ -79,6 +82,7 @@ void World::readJSON(const QJsonObject &json)
 void World::writeJSON(QJsonObject &json) const
 {
     //json["name"] = mName;
+
     QJsonArray teamAllyArray;
     for (const Player &player : teamAlly) {
         QJsonObject playerObject;
@@ -154,11 +158,36 @@ bool World::saveWorld(World::SaveFormat saveFormat) const
 
 void World::handlePlayButton()
 {
-    int a = 0;
-    a++;
-    for (PlayerAI a: teamAlly) {
+    QList<Action> intendedActions;
+    for (PlayerAI& a: teamAlly) {
         a.cycle();
+        intendedActions.append(a.getIntention());
     }
+    int duplicates = 0;
+    for (Action a: intendedActions) {
+        for (Action b: intendedActions) {
+            if (a == b)
+                duplicates++;
+        }
+        QString action_name;
+        switch (a.getActionType()) {
+            case a.DefendGoal:
+                qDebug() << "Player " << a.getExecutorId() << " defends goal" << "\n";
+                break;
+            case a.Intercept:
+                qDebug() << "Player " << a.getExecutorId() << " intercepts ball" << "\n";
+                break;
+            case a.Mark:
+                qDebug() << "Player " << a.getExecutorId() << "marks enemy " << a.getAgainstId() << "\n";
+                break;
+            case a.Wait:
+                qDebug() << "Player " << a.getExecutorId() << "waits on his position" << "\n";
+            break;
+        }
+    }
+    duplicates -= intendedActions.length();
+    qDebug() << "There is " << duplicates << "duplicated action out of " << intendedActions.length() << "\n";
+    emit updateRequired();
 }
 
 

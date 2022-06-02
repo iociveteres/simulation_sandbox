@@ -20,7 +20,6 @@ private:
     QVector<Player> teamEnemy;
     QVector<PlayerRole> formation;
 
-
     QList<PlayerWorldModel*> pastStates;
 
 public:
@@ -39,6 +38,7 @@ public:
     std::tuple<bool, Player> getAllyById(int id);
     Player getAllyByRoleName(PlayerRole::RoleName roleName);
     PlayerRole getPlayerRoleByRoleName(PlayerRole::RoleName  roleName);
+    PlayerRole getPlayerRoleByAllyId(int id);
 
     int getHowManyPlayersAreInArea(QRectF area);
 
@@ -53,6 +53,7 @@ public:
     void checkFormationIsInBox(QPointF shift);
     int getEnemyCount() const;
 
+    QVector<PlayerRole> getFormation() const;
 };
 
 #include "World.h"

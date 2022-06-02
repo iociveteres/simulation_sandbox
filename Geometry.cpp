@@ -37,9 +37,9 @@ double distanceLineAndPoint(QLineF l, QPointF p) {
 // This can be interpreted as finding intersection of segment
 // and circle of radius of dist
 QPointF findPointInDistFromEndOfSegment(QPointF a, QPointF b, double dist) {
-    double m = (b.y()-a.y())/(b.x()-a.x());
-    double x = a.x() + dist/sqrt(1+pow(m, 2));
-    double y = a.y() + dist/sqrt(1+1/pow(m, 2));
+    double m = atan2(b.y()-a.y(),b.x()-a.x());
+    double x = a.x() + dist*cos(m);
+    double y = a.y() + dist*sin(m);
     return QPointF(x, y);
 
 }

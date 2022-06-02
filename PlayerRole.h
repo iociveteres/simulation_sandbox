@@ -29,6 +29,7 @@ public:
                double _boxWidth, double _boxLength,
                double _pPosInBox_x, double _pPosInBox_y,
                RoleName _Role);
+
     QRectF  getRoleRect();
     QPointF getRolePoint();
     double getRoleMargin() const;
@@ -292,7 +293,7 @@ public:
            double boxWidth = PITCH_WIDTH/2,
            double boxLength = PITCH_LENGTH/5,
            double pPosInBox_x = 0,
-           double pPosInBox_y = PITCH_WIDTH/4,
+           double pPosInBox_y = -PITCH_WIDTH/4,
            RoleName Role = RoleName::AttackerRight):
         Attacker(margin,
                  boxPos_x, boxPos_y,
@@ -311,7 +312,7 @@ public:
            double boxWidth = PITCH_WIDTH/2,
            double boxLength = PITCH_LENGTH/5,
            double pPosInBox_x = 0,
-           double pPosInBox_y = -PITCH_WIDTH/4,
+           double pPosInBox_y = PITCH_WIDTH/4,
            RoleName Role = RoleName::AttackerLeft):
         Attacker(margin,
                  boxPos_x, boxPos_y,

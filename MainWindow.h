@@ -19,13 +19,12 @@ private:
 
 private slots:
     void handleLoadButton();
+    void updateField();
 
 public:
     MainWindow(QWidget *parent = nullptr);
     MainWindow(QWidget *parent, World *world);
-
-    ~MainWindow();
-
+    ~MainWindow();;
 };
 
 #endif // MAINWINDOW_H

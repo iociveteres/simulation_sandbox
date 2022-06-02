@@ -5,6 +5,11 @@ int PlayerWorldModel::getEnemyCount() const
     return enemyCount;
 }
 
+QVector<PlayerRole> PlayerWorldModel::getFormation() const
+{
+    return formation;
+}
+
 PlayerWorldModel::PlayerWorldModel()
 {
 }
@@ -16,7 +21,7 @@ PlayerWorldModel::PlayerWorldModel(const World& world, Player* _myself)
     teamAlly = world.makePlayerTeamAllyForWorldView(_myself->getId());
     enemyCount = world.getTeamEnemy().length();
     teamEnemy = world.getTeamEnemy();
-    ball = world.getBall();
+    ball = new Ball(*world.getBall());
     formation = _myself->getDefaultFormation();
     determineFormation();
 }
@@ -122,7 +127,13 @@ PlayerRole PlayerWorldModel::getPlayerRoleByRoleName(PlayerRole::RoleName roleNa
         if (roleName == r.getRoleName())
             return r;
     }
-    throw std::runtime_error("No player with this role in formation");
+    return PlayerRole();
+    //throw std::runtime_error("No player with this role in formation");
+}
+
+PlayerRole PlayerWorldModel::getPlayerRoleByAllyId(int id)
+{
+    return getPlayerRoleByRoleName(this->myself->player_roleMap[id]);
 }
 
 int PlayerWorldModel::getHowManyPlayersAreInArea(QRectF area)
@@ -155,10 +166,10 @@ void PlayerWorldModel::determineFormation()
 {
     QPointF fieldCenter = QPointF(PITCH_LENGTH/2, PITCH_WIDTH/2);
     if (this->ball != nullptr) {
-        QPointF shift = fieldCenter - ball->getCoordinatesPoint();
+        QPointF shift = ball->getCoordinatesPoint() - fieldCenter;
         checkFormationIsInBox(shift);
 
-        for (PlayerRole a: formation) {
+        for (PlayerRole& a: formation) {
             a.setFormationMargin_x(shift.x());
             a.setFormationMargin_y(shift.y());
         }
@@ -202,15 +213,15 @@ double rand(double fMin, double fMax)
 
 void PlayerWorldModel::introduceNoises()
 {
-    for (Player p: teamAlly) {
+    for (Player& p: teamAlly) {
         QPointF pos = p.getCoordinatesPoint();
-        double strength = log(distance(pos, myself->getCoordinatesPoint())/125);
+        double strength = log(distance(pos, myself->getCoordinatesPoint())/125)*1.3;
         double x = pos.x() + rand(-0.3, 0.3) * strength;
         double y = pos.y() + rand(-0.3, 0.3) * strength;
         p.setX(x);
         p.setY(y);
     }
-    for (Player p: teamEnemy) {
+    for (Player& p: teamEnemy) {
         QPointF pos = p.getCoordinatesPoint();
         double strength = log(distance(pos, myself->getCoordinatesPoint())/125);
         double x = pos.x() + rand(-0.3, 0.3) * strength;
@@ -265,7 +276,7 @@ void PlayerWorldModel::update(const World& world, Player* _myself) {
     teamAlly = world.makePlayerTeamAllyForWorldView(_myself->getId());
     enemyCount = world.getTeamEnemy().length();
     teamEnemy = world.getTeamEnemy();
-    ball = world.getBall();
+    ball = new Ball(*world.getBall());
 
     if (bIntroduceNoises)
         introduceNoises();

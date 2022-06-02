@@ -18,17 +18,30 @@ MainWindow::MainWindow(QWidget *parent, World* _world)
     buttonLayout->addWidget(loadButton);
     QPushButton* playButton = new QPushButton("Просчитать", this);
     buttonLayout->addWidget(playButton);
-    choosePlayerPersperctiveComboBox = new QComboBox(this);
 
     interfaceLayout->addLayout(buttonLayout);
 
     QVBoxLayout* checkboxLayout = new QVBoxLayout(this);
+
+    choosePlayerPersperctiveComboBox = new QComboBox(this);
+
+    checkboxLayout->addWidget(choosePlayerPersperctiveComboBox);
+    QCheckBox* addNoisesCheckbox = new QCheckBox("Внесение шумов", this);
+    addNoisesCheckbox->setCheckState(Qt::CheckState::Checked);
+    checkboxLayout->addWidget(addNoisesCheckbox);
+    QCheckBox* limitVisionCheckbox = new QCheckBox("Ограничение поля зрения", this);
+    limitVisionCheckbox->setCheckState(Qt::CheckState::Checked);
+    checkboxLayout->addWidget(limitVisionCheckbox);
+    QCheckBox* randomCheckbox = new QCheckBox("Сид ГСЧ по умолчанию", this);
+    randomCheckbox->setCheckState(Qt::CheckState::Checked);
+    checkboxLayout->addWidget(randomCheckbox);
+    checkboxLayout->addStrut(20);
+
     QCheckBox* drawRoleRectsCheckbox = new QCheckBox("Зоны ролей", this);
     checkboxLayout->addWidget(drawRoleRectsCheckbox);
-    QCheckBox* drawGoalDefendPositionsCheckbox = new QCheckBox("Точки защиты ворот", this);
-    checkboxLayout->addWidget(drawGoalDefendPositionsCheckbox);
-    QCheckBox* drawTangentLinesCheckbox = new QCheckBox("Касательные от мяча", this);
-    checkboxLayout->addWidget(drawTangentLinesCheckbox);
+    QCheckBox* drawIntentionsCheckbox = new QCheckBox("Отобразить намерения игроков", this);
+    checkboxLayout->addWidget(drawIntentionsCheckbox);
+
 
     interfaceLayout->addLayout(checkboxLayout);
     // assemble window layout
@@ -38,10 +51,31 @@ MainWindow::MainWindow(QWidget *parent, World* _world)
     // slots
     connect(loadButton, &QPushButton::clicked, this, &MainWindow::handleLoadButton);
     connect(playButton, &QPushButton::clicked, world, &World::handlePlayButton);
+
+    connect(choosePlayerPersperctiveComboBox, SIGNAL(currentIndexChanged(int)),
+            render, SLOT(setPlayerToDrawRects(int)));
+
+    connect(addNoisesCheckbox, SIGNAL(stateChanged(int)),
+            render, SLOT(setIntroduceNoises(int)));
+    connect(limitVisionCheckbox, SIGNAL(stateChanged(int)),
+            render, SLOT(setLimitVision(int)));
+    connect(randomCheckbox, SIGNAL(stateChanged(int)),
+            render, SLOT(setRandom(int)));
+
+    connect(drawRoleRectsCheckbox, SIGNAL(stateChanged(int)),
+            render, SLOT(setDrawRectsState(int)));
+    connect(drawIntentionsCheckbox, SIGNAL(stateChanged(int)),
+            render, SLOT(setDrawIntentionsState(int)));
+
+    connect(world, &World::updateRequired, this, &MainWindow::updateField);
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
+
+}
+
+void MainWindow::updateField() {
+    render->update();
 }
 
 void MainWindow::handleLoadButton()
@@ -56,16 +90,14 @@ void MainWindow::handleLoadButton()
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
-    try {
+    if (!fileNames.empty()) {
         world->loadWorld(World::Json, fileNames.at(0));
 
         int i = 0;
         for (Player a: world->getTeamAlly()) {
-            choosePlayerPersperctiveComboBox->addItem(QString("Игрок ") + QString(i));
+            choosePlayerPersperctiveComboBox->addItem(QString("Игрок ") + QString::number(i));
+            i++;
         }
         render->update();
-    }  catch(const std::exception& e) {
-        qDebug() << "Caught exception \"" << e.what() << "\"\n";
     }
-
 }

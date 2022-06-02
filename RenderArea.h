@@ -18,6 +18,7 @@ private:
     QImage* image;
     QLabel* label;
     World* world;
+    PlayerAI playerToDrawRects = PlayerAI();
 
 public:
     RenderArea(QWidget *parent = nullptr, World* _world = nullptr);
@@ -30,12 +31,19 @@ public:
     void drawBall(Ball* ball);
     void drawRoleRects(QVector<PlayerRole> roles);
 
-    void drawWorld(bool drawRoleRects);
+    void drawWorld();
 
     QRectF getRectFAtCenter(double x, double y, double awidth, double aheight);
     QRectF getRectFCircleAtCenter(double x, double y, double radius);
 
 
+public slots:
+    void setPlayerToDrawRects(int i);
+    void setDrawRectsState(int i);
+    void setDrawIntentionsState(int i);
+    void setIntroduceNoises(int i);
+    void setLimitVision(int i);
+    void setRandom(int i);
 };
 
 #endif // RENDERAREA_H

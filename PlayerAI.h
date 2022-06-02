@@ -59,6 +59,8 @@ public:
 
     double calcRoleMarginFromGoal();
     bool checkAllyIsInPlace(PlayerRole::RoleName roleName);
+    PlayerWorldModel *getWorldModel() const;
+
 private:
     Team team;
 };

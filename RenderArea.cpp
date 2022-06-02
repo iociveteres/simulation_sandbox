@@ -8,7 +8,7 @@ const Qt::GlobalColor ballFillColor = Qt::white;
 
 const QRect playArea(PITCH_MARGIN, PITCH_MARGIN, PITCH_LENGTH, PITCH_WIDTH);
 const QRect wholeFieldArea(0, 0, TOTAL_FIELD_LENGTH, TOTAL_FIELD_WIDTH);
-
+const QPointF MarginPoint(PITCH_MARGIN, PITCH_MARGIN);
 
 RenderArea::RenderArea(QWidget* parent, World* _world):QWidget(parent)
 {
@@ -24,13 +24,13 @@ RenderArea::RenderArea(QWidget* parent, World* _world):QWidget(parent)
     layout->addWidget(label);
     setLayout(layout);
 
-    drawWorld(false);
+    drawWorld();
 
     label->setPixmap(QPixmap::fromImage(*image));
 }
 
 void RenderArea::update() {
-    drawWorld(false);
+    drawWorld();
     label->setPixmap(QPixmap::fromImage(*image));
 }
 
@@ -94,9 +94,11 @@ void RenderArea::drawIntentions(PlayerAI playerAI) {
     painter.setWindow(wholeFieldArea);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    QPointF intendedPoint = playerAI.getIntention().getPrefferedPoint();
+    Action a = playerAI.getIntention();
+    QPointF intendedPoint = playerAI.getIntention().getPrefferedPoint() - MarginPoint;
     QPointF currentPoint = playerAI.getCoordinatesPoint();
-    QRectF intendedKickableAreaRect = playerAI.getKickableAreaRect();
+    QRectF intendedKickableAreaRect = playerAI.getKickableAreaRect(intendedPoint);
+    //intendedKickableAreaRect.moveTopLeft(intendedKickableAreaRect.topLeft() + MarginPoint);
 
     painter.setPen(QPen(neutralColor, 0.2));
     painter.setBrush(Qt::NoBrush);
@@ -118,7 +120,7 @@ void RenderArea::drawIntentions(PlayerAI playerAI) {
     painter.drawChord(intendedKickableAreaRect, (180+playerAI.getAngle())*16, 180*16);
 
     painter.setPen(QPen(playerColor, 0.2, Qt::DashLine));
-    painter.drawLine(intendedPoint, currentPoint);
+    painter.drawLine(intendedPoint+MarginPoint, currentPoint+MarginPoint);
 }
 
 void RenderArea::drawField() {
@@ -188,38 +190,48 @@ void RenderArea::drawBall(Ball *ball)
 
 void RenderArea::drawRoleRects(QVector<PlayerRole> roles)
 {
-    QPainter painter(image);
-    painter.setWindow(wholeFieldArea);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    if (!roles.empty()) {
+        QPainter painter(image);
+        painter.setWindow(wholeFieldArea);
+        painter.setRenderHint(QPainter::Antialiasing, true);
 
-    painter.setPen(QPen(Qt::yellow, 0.05));
-    painter.setBrush(Qt::NoBrush);
-    for (PlayerRole r: roles) {
-        //QRectF a = r.getRoleRect(); debug, later delete
-        painter.drawRect(r.getRoleRect());
-        painter.drawEllipse(r.getRolePoint(), 0.1, 0.1);
+        painter.setPen(QPen(Qt::yellow, 0.08));
+
+        for (PlayerRole r: roles) {
+            //QRectF a = r.getRoleRect(); debug, later delete
+            painter.setBrush(Qt::NoBrush);
+            painter.drawRect(r.getRoleRect());
+            painter.setBrush(QBrush(Qt::yellow, Qt::SolidPattern));
+            painter.drawEllipse(r.getRolePoint(), 0.1, 0.1);
+        }
     }
 }
 
-void RenderArea::drawWorld(bool doDrawRoleRects = false) {
+void RenderArea::drawWorld() {
+    qDebug() << "Draw world\n";
     drawField();
 
-    if (doDrawRoleRects) {
-        drawRoleRects(Player().getDefaultFormation());
-    }
-
-    for (Player& ally: world->getTeamAlly()) {
+    for (Player ally: world->getTeamAlly()) {
         drawPlayer(ally);
     }
 
-    for (Player& enemy: world->getTeamEnemy()) {
+    for (Player enemy: world->getTeamEnemy()) {
         drawPlayer(enemy);
     }
 
+    if (bDrawIntentions) {
+        for (PlayerAI ally: world->getTeamAlly()) {
+            drawIntentions(ally);
+        }
+    }
+    if (bDrawRoleRects) {
+        drawRoleRects(playerToDrawRects.getWorldModel()->getFormation());
+    }
+    if (bDrawGoalDefendPositions) {
+
+    }
+
     drawBall(world->getBall());
-
-
-    //if (world->getCalculated()) {}
 }
 
 QRectF RenderArea::getRectFCircleAtCenter(double x, double y, double radius) {
@@ -229,3 +241,55 @@ QRectF RenderArea::getRectFCircleAtCenter(double x, double y, double radius) {
 QRectF RenderArea::getRectFAtCenter(double x, double y, double awidth, double aheight) {
     return QRectF(x - awidth/2, y - aheight/2, awidth, aheight);
 }
+
+void RenderArea::setPlayerToDrawRects(int i) {
+    qDebug() << "Combobox chosen player" << i << "\n" ;
+    playerToDrawRects = world->getTeamAlly()[i];
+}
+
+void RenderArea::setDrawRectsState(int i)
+{
+    if (i == 0)
+        bDrawRoleRects = false;
+    if (i == 2)
+        bDrawRoleRects = true;
+    emit world->updateRequired();
+}
+
+void RenderArea::setDrawIntentionsState(int i)
+{
+    if (i == 0)
+        bDrawIntentions = false;
+    if (i == 2)
+        bDrawIntentions = true;
+    emit world->updateRequired();
+}
+
+
+void RenderArea::setRandom(int i)
+{
+    qDebug() << "set random\n";
+    if (i == 0)
+        bDefaultRandomSeed = false;
+    if (i == 2)
+        bDefaultRandomSeed = true;
+}
+
+void RenderArea::setIntroduceNoises(int i)
+{
+    qDebug() << "introduce noises\n";
+    if (i == 0)
+        bIntroduceNoises = false;
+    if (i == 2)
+        bIntroduceNoises = true;
+}
+
+void RenderArea::setLimitVision(int i)
+{
+    qDebug() << "set limit vision\n";
+    if (i == 0)
+        bLimitVision = false;
+    if (i == 2)
+        bLimitVision = true;
+}
+

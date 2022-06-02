@@ -73,6 +73,11 @@ void Action::setDesirebility(double value)
     desirebility = value;
 }
 
+Action::ActionType Action::getActionType() const
+{
+    return actionType;
+}
+
 int Action::getExecutorId() const
 {
     return executorId;

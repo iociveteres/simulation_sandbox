@@ -37,7 +37,9 @@ public:
     double getDesirebility() const;
     void setDesirebility(double value);
 
-   private:
+    ActionType getActionType() const;
+
+private:
     ActionType actionType;
     int executorId;
     int againstId;

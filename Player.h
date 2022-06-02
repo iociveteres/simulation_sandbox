@@ -38,7 +38,7 @@ public:
     PlayerRole choosePlayerRole();
 
     QRectF getKickableAreaRect();
-    QRectF getIntentionsKickableAreaRect();
+    QRectF getKickableAreaRect(QPointF pos);
     QRectF getPlayerWidgetRect();
     Player::Team getTeam() const;
     static int getPlayerCount();
@@ -54,6 +54,9 @@ public:
     QPointF getDefaultRolePosition(PlayerRole::RoleName roleName) const;
 
     void tick();
+    static std::map<int, PlayerRole::RoleName> player_roleMap;
+    PlayerRole::RoleName getAssignedRole() const;
+
 protected:
     Team team;
 };

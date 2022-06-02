@@ -24,6 +24,9 @@ private:
 
     Ball* ball;
 
+signals:
+    void updateRequired();
+
 public slots:
     void handlePlayButton();
 
