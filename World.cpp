@@ -20,17 +20,25 @@ Ball *World::getBall() const
     return ball;
 }
 
-QVector<Player> World::makePlayerTeamAllyForWorldView(PlayerAI forPlayer) const
+QVector<Player> World::makePlayerTeamAllyForWorldView(int forPlayer) const
 {
     QVector<Player> a;
 
     for (PlayerAI p: teamAlly) {
-        if (forPlayer.getId() == p.getId())
+        if (forPlayer == p.getId())
             continue;
-        a.append(Player(p.getTeam(), p.getX(), p.getY(), p.getAngle()));
+        a.append(Player(p.getTeam(), p.getX(), p.getY(), p.getAngle(), p.getId()));
     }
 
     return a;
+}
+
+PlayerAI World::getAllyById(int id) {
+    for (PlayerAI a: teamAlly) {
+        if (a.getId() == id)
+            return a;
+    }
+    return PlayerAI();
 }
 
 void World::readJSON(const QJsonObject &json)
@@ -44,8 +52,9 @@ void World::readJSON(const QJsonObject &json)
         teamAlly.reserve(teamAllyArray.size());
         for (int playerIndex = 0; playerIndex < teamAllyArray.size(); ++playerIndex) {
             QJsonObject playerObject = teamAllyArray[playerIndex].toObject();
-            PlayerAI player;
+            PlayerAI player = PlayerAI(Player::Team::ally, this);
             player.readJSON(playerObject);
+            player.choosePlayerRole();
             teamAlly.append(player);
         }
     }
@@ -55,15 +64,16 @@ void World::readJSON(const QJsonObject &json)
         teamEnemy.reserve(teamEnemyArray.size());
         for (int playerIndex = 0; playerIndex < teamEnemyArray.size(); ++playerIndex) {
             QJsonObject playerObject = teamEnemyArray[playerIndex].toObject();
-            Player player;
+            Player player(nullptr);
             player.readJSON(playerObject);
+
             teamEnemy.append(player);
         }
     }
 
    ball = new Ball();
     if (json.contains("ball") && json["ball"].isObject())
-        ball->readJSON(json["ball"].toObject());
+        ball->readJSON(json["ball"].toObject());  
 }
 
 void World::writeJSON(QJsonObject &json) const
@@ -146,17 +156,20 @@ void World::handlePlayButton()
 {
     int a = 0;
     a++;
+    for (PlayerAI a: teamAlly) {
+        a.cycle();
+    }
 }
 
 
 void World::populate() {
-    teamAlly.append(PlayerAI(Player::Team::ally, r_PITCH_LENGTH/4, 0, 90));
-    teamAlly.append(PlayerAI(Player::Team::ally, r_PITCH_LENGTH/4, r_PITCH_WIDTH/2, 90));
-    teamAlly.append(PlayerAI(Player::Team::ally, r_PITCH_LENGTH/4, r_PITCH_WIDTH, 90));
+    teamAlly.append(PlayerAI(Player::Team::ally, PITCH_LENGTH/4, 0, 90, nullptr));
+    teamAlly.append(PlayerAI(Player::Team::ally, PITCH_LENGTH/4, PITCH_WIDTH/2, 90, nullptr));
+    teamAlly.append(PlayerAI(Player::Team::ally, PITCH_LENGTH/4, PITCH_WIDTH, 90, nullptr));
 
-    teamEnemy.append(Player(Player::Team::enemy, r_PITCH_LENGTH/4*3,0, -90));
-    teamEnemy.append(Player(Player::Team::enemy, r_PITCH_LENGTH/4*3, r_PITCH_WIDTH/2, -90));
-    teamEnemy.append(Player(Player::Team::enemy, r_PITCH_LENGTH/4*3, r_PITCH_WIDTH, -90));
+    teamEnemy.append(Player(Player::Team::enemy, PITCH_LENGTH/4*3,0, -90));
+    teamEnemy.append(Player(Player::Team::enemy, PITCH_LENGTH/4*3, PITCH_WIDTH/2, -90));
+    teamEnemy.append(Player(Player::Team::enemy, PITCH_LENGTH/4*3, PITCH_WIDTH, -90));
 
-    ball = new Ball(r_PITCH_LENGTH/2, r_PITCH_WIDTH/2);
+    ball = new Ball(PITCH_LENGTH/2, PITCH_WIDTH/2);
 }

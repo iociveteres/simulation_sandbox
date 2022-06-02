@@ -3,22 +3,25 @@
 
 #include "PrefferedPoint.h"
 
-
-
 class Action
 {
 public:
     enum ActionType {
         Mark,
         DefendGoal,
-        Wait
+        Wait,
+        Intercept
     };
 
     struct desirebilityDescending;
     struct costAscending;
 
     Action();
-    Action(ActionType _actionType, int _executorId, int _againstId, double _desirebility);
+    Action(ActionType _actionType, int _executorId,
+           int _againstId, double _desirebility, double _cost);
+    Action(ActionType _actionType, int _executorId,
+           int _againstId, double _desirebility,
+           QPointF point, double _cost);
     bool operator==(const Action &rhs) const;
 
     QPointF getPrefferedPoint() const;
@@ -27,7 +30,6 @@ public:
 
     void setPrefferedPoint(const QPointF &value);
 
-
     const static int NoEnemyCode = -1000;
     double getCost() const;
     void setCost(double value);
@@ -35,7 +37,7 @@ public:
     double getDesirebility() const;
     void setDesirebility(double value);
 
-private:
+   private:
     ActionType actionType;
     int executorId;
     int againstId;

@@ -18,6 +18,7 @@ public:
     BaseEntity(double _x, double _y, double _angle);
     BaseEntity(double _x, double _y, double _angle,
                Velocity _velocity, Acceleration _acceleration);
+    BaseEntity(const BaseEntity &b);
 
 
     double getX() const;
@@ -29,7 +30,15 @@ public:
     void setY(double value);
     void setAngle(double value);
 
+    Velocity getVelocity() const;
+    QPointF getPVelocity() const;
+    void setVelocity(const Velocity &value);
+    Acceleration getAcceleration() const;
+    QPointF getPAcceleration() const;
+    void setAcceleration(const Acceleration &value);
+
     void tick();
-   };
+
+};
 
 #endif // BASEENTITY_H

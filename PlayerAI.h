@@ -4,7 +4,9 @@
 #include "Player.h"
 #include "PlayerWorldModel.h"
 #include "Geometry.h"
+#include "Globals.h"
 #include <tuple>
+#include <memory>
 
 class PlayerAI:
         public Player
@@ -15,11 +17,12 @@ private:
     double roleMargin;
     Action intention;
     PlayerWorldModel* worldModel;
+    World* worldLink;
 
 public:
     PlayerAI();
-    PlayerAI(Team team);
-    PlayerAI(Team _team, int _x, int _y, double _angle);
+    PlayerAI(Team team, World *_world);
+    PlayerAI(Team _team, int _x, int _y, double _angle, World *_world);
     ~PlayerAI();
 
     void cycle();
@@ -38,18 +41,22 @@ public:
     QList<Action> makePrefferedActionsListNeighbours();
     Action determinePrefferedIntention();
 
-    Action checkMarking(Player enemy);
-    Action checkDefendGoal();
-    Action checkIntercept();
-    Action checkWaitDefensive();
+    Action checkMarking(Player enemy, Player player);
+    Action checkDefendGoal(Player player);
+    Action checkIntercept(Player player);
+    Action checkWaitDefensive(Player player);
 
+    QPointF getPointMarking(Action a, Player player);
 
-    QPointF getPointMarking(Action a);
     QRectF findDefendGoalArea();
     double getGoalCoverageRatingFromPlayerPos(QPointF playerPos);
-    std::tuple<QPointF, QPointF> getPointsDefendGoal(Action a);
-    QPointF getPointIntercept();
-    QPointF getPointWait();
+
+    std::tuple<QPointF, QPointF> getPointsDefendGoal(Action a, Player player);
+
+    std::tuple<bool, QPointF> getPointIntercept(Player player);
+
+    QPointF getPointWait(Player player);
+
     double calcRoleMarginFromGoal();
     bool checkAllyIsInPlace(PlayerRole::RoleName roleName);
 private:

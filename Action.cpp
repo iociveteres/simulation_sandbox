@@ -2,15 +2,29 @@
 
 Action::Action()
 {
-
+    int a;
 }
 
-Action::Action(ActionType _actionType, int _executorId, int _againstId, double _desirebility)
+Action::Action(ActionType _actionType, int _executorId,
+               int _againstId, double _desirebility, double _cost)
 {
     actionType = _actionType;
     executorId = _executorId;
     againstId = _againstId;
     desirebility = _desirebility;
+    cost = _cost;
+}
+
+Action::Action(ActionType _actionType, int _executorId,
+               int _againstId, double _desirebility,
+               QPointF point, double _cost)
+{
+    actionType = _actionType;
+    executorId = _executorId;
+    againstId = _againstId;
+    desirebility = _desirebility;
+    prefferedPoint = point;
+    cost = _cost;
 }
 
 // check that two same actions are intended against same opponent
@@ -37,6 +51,26 @@ QPointF Action::getPrefferedPoint() const
 void Action::setPrefferedPoint(const QPointF &value)
 {
     prefferedPoint = value;
+}
+
+double Action::getCost() const
+{
+    return cost;
+}
+
+void Action::setCost(double value)
+{
+    cost = value;
+}
+
+double Action::getDesirebility() const
+{
+    return desirebility;
+}
+
+void Action::setDesirebility(double value)
+{
+    desirebility = value;
 }
 
 int Action::getExecutorId() const

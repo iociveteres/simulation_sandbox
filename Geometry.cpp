@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <array>
 
-double limit(double value, double top, double bot) {
+double limit(double value, double bot, double top) {
     if (value >= top)
         return top;
     if (value <= bot)
@@ -20,6 +20,11 @@ double distance(QPointF a, QPointF b)
 double distance(double ax, double ay, double bx, double by)
 {
     return sqrt(pow(bx - ax, 2)+pow(by - ay, 2));
+}
+
+double vectorLength(double ax, double ay)
+{
+    return sqrt(pow(ax, 2)+pow(ay, 2));
 }
 
 double distanceLineAndPoint(QLineF l, QPointF p) {

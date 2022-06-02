@@ -5,7 +5,7 @@
 #include <QPointF>
 #include <cmath>
 
-double limit(double value, double top, double bot);
+double limit(double value, double bot, double top);
 double distance(QPointF a, QPointF b);
 double distance(double ax, double ay, double bx, double by);
 double vectorLength(double ax, double ay);

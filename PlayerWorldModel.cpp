@@ -5,6 +5,10 @@ int PlayerWorldModel::getEnemyCount() const
     return enemyCount;
 }
 
+PlayerWorldModel::PlayerWorldModel()
+{
+}
+
 PlayerWorldModel::PlayerWorldModel(const World& world, Player* _myself)
 {
     myself = _myself;
@@ -32,7 +36,7 @@ Ball *PlayerWorldModel::getBall() const
     return ball;
 }
 
-Player PlayerWorldModel::getEnemyClosestToTheBall()
+std::tuple<bool, Player> PlayerWorldModel::getEnemyClosestToTheBall()
 {
     double minVal = 10000;
     Player minPlayer;
@@ -45,9 +49,9 @@ Player PlayerWorldModel::getEnemyClosestToTheBall()
     }
 
     if (minVal != 10000)
-        return minPlayer;
+        return std::make_tuple(true, minPlayer);
     else
-        throw std::runtime_error("Empty enemy team vector");
+        return std::make_tuple(false, minPlayer);
 }
 
 Player PlayerWorldModel::getAllyClosestToThePoint(QPointF p)
@@ -69,15 +73,16 @@ Player PlayerWorldModel::getAllyClosestToThePoint(QPointF p)
 
 }
 
-Player PlayerWorldModel::getEnemyControllingBall()
+std::tuple<bool, Player> PlayerWorldModel::getEnemyControllingBall()
 {
-    Player p = getEnemyClosestToTheBall();
+    std::tuple<bool, Player> t = getEnemyClosestToTheBall();
+    Player p = std::get<1>(t);
 
     if (distance(p.getCoordinatesPoint(), ball->getCoordinatesPoint())
             <= KICKABLE_AREA + 1)
-        return p;
+        return std::make_tuple(true, p);
     else
-        throw std::runtime_error("No enemy controlling ball");
+        return std::make_tuple(false, p);
 }
 
 Player PlayerWorldModel::getEnemyById(int id)
@@ -90,14 +95,15 @@ Player PlayerWorldModel::getEnemyById(int id)
     return Player();
 }
 
-Player PlayerWorldModel::getAllyById(int id)
+std::tuple<bool, Player> PlayerWorldModel::getAllyById(int id)
 {
     for (Player a: teamAlly) {
         if (id == a.getId()) {
-            return a;
+            return std::make_tuple(true, a);
         }
     }
-    throw std::runtime_error("No ally with this id");
+    return std::make_tuple(false, Player());
+    //throw std::runtime_error("No ally with this id");
 }
 
 Player PlayerWorldModel::getAllyByRoleName(PlayerRole::RoleName roleName)
@@ -188,14 +194,60 @@ void PlayerWorldModel::determineFormation()
     }
 }
 
+double rand(double fMin, double fMax)
+{
+    double f = (double)rand() / RAND_MAX;
+    return fMin + f * (fMax - fMin);
+}
+
 void PlayerWorldModel::introduceNoises()
 {
-
+    for (Player p: teamAlly) {
+        QPointF pos = p.getCoordinatesPoint();
+        double strength = log(distance(pos, myself->getCoordinatesPoint())/125);
+        double x = pos.x() + rand(-0.3, 0.3) * strength;
+        double y = pos.y() + rand(-0.3, 0.3) * strength;
+        p.setX(x);
+        p.setY(y);
+    }
+    for (Player p: teamEnemy) {
+        QPointF pos = p.getCoordinatesPoint();
+        double strength = log(distance(pos, myself->getCoordinatesPoint())/125);
+        double x = pos.x() + rand(-0.3, 0.3) * strength;
+        double y = pos.y() + rand(-0.3, 0.3) * strength;
+        p.setX(x);
+        p.setY(y);
+    }
+    if (ball) {
+        QPointF pos = ball->getCoordinatesPoint();
+        double strength = log(distance(pos, myself->getCoordinatesPoint())/125);
+        double x = pos.x() + rand(-0.3, 0.3) * strength;
+        double y = pos.y() + rand(-0.3, 0.3) * strength;
+        ball->setX(x);
+        ball->setY(y);
+    }
 }
 
 void PlayerWorldModel::limitVisionDist()
 {
-
+    for (int i = 0; i < teamAlly.length(); i++) {
+        Player p = teamAlly[i];
+        double d = distance(p.getCoordinatesPoint(), myself->getCoordinatesPoint());
+        if (d > 70) {
+            teamAlly.remove(i);
+            i--;
+        }
+    }
+    for (int i = 0; i < teamEnemy.length(); i++) {
+        Player p = teamEnemy[i];
+        double d = distance(p.getCoordinatesPoint(), myself->getCoordinatesPoint());
+        if (d > 70) {
+            teamEnemy.remove(i);
+            i--;
+        }
+    }
+    if (distance(ball->getCoordinatesPoint(), myself->getCoordinatesPoint()) > 70)
+        ball = nullptr;
 }
 
 void PlayerWorldModel::limitVisionCone()
@@ -214,6 +266,12 @@ void PlayerWorldModel::update(const World& world, Player* _myself) {
     enemyCount = world.getTeamEnemy().length();
     teamEnemy = world.getTeamEnemy();
     ball = world.getBall();
+
+    if (bIntroduceNoises)
+        introduceNoises();
+    if (bLimitVision)
+        limitVisionDist();
+
     formation = _myself->getDefaultFormation();
     determineFormation();
 }

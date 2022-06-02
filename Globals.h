@@ -3,8 +3,13 @@
 
 #include <QtGlobal>
 
-extern bool drawRoleRects;
-extern bool drawGoalDefendPositions;
-extern bool drawTangentLines;
+class World;
+
+extern bool bIntroduceNoises;
+extern bool bLimitVision;
+
+extern bool bDrawRoleRects;
+extern bool bDrawGoalDefendPositions;
+extern bool bDrawTangentLines;
 
 #endif // GLOBALS_H

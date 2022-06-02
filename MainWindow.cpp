@@ -56,11 +56,16 @@ void MainWindow::handleLoadButton()
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
-    world->loadWorld(World::Json, fileNames.at(0));
+    try {
+        world->loadWorld(World::Json, fileNames.at(0));
 
-    int i = 0;
-    for (Player a: world->getTeamAlly()) {
-        choosePlayerPersperctiveComboBox->addItem(QString("Игрок ") + QString(i));
+        int i = 0;
+        for (Player a: world->getTeamAlly()) {
+            choosePlayerPersperctiveComboBox->addItem(QString("Игрок ") + QString(i));
+        }
+        render->update();
+    }  catch(const std::exception& e) {
+        qDebug() << "Caught exception \"" << e.what() << "\"\n";
     }
-    render->update();
+
 }

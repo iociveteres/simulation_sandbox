@@ -11,6 +11,12 @@ Ball::Ball(double _x, double _y):
 
 }
 
+Ball::Ball(Ball &_ball):
+    BaseEntity(_ball.x, _ball.y, 0, _ball.velocity, _ball.acceleration)
+{
+
+}
+
 double Ball::getX() const
 {
     return x;

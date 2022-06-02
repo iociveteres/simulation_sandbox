@@ -46,10 +46,11 @@ public:
     QVector<Player> getTeamEnemy() const;
     Ball *getBall() const;
 
-    QVector<Player> makePlayerTeamAllyForWorldView(PlayerAI forPlayer) const;
+    QVector<Player> makePlayerTeamAllyForWorldView(int forPlayer) const;
 
     void populate();
 
+    PlayerAI getAllyById(int id);
 };
 
 #include "PlayerAI.h"

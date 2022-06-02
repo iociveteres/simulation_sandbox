@@ -9,7 +9,7 @@
 #include "ModelConstants.h"
 #include "PlayerRole.h"
 #include "BaseEntity.h"
-
+#include "Geometry.h"
 
 class Player:
         public BaseEntity
@@ -29,9 +29,13 @@ public:
     Q_ENUM(Team)
 
     Player();
+    Player(bool* a);
     Player(Team team);
     Player(Team _team, double _x, double _y, double _angle);
+    Player(Team _team, double _x, double _y, double _angle, int _id);
+    Player(const Player &p);
     ~Player();
+    PlayerRole choosePlayerRole();
 
     QRectF getKickableAreaRect();
     QRectF getIntentionsKickableAreaRect();
@@ -44,11 +48,12 @@ public:
 
     void readJSON(const QJsonObject &json);
     void writeJSON(QJsonObject &json) const;
-    static QVector<PlayerRole> getRoles();
+    static QVector<PlayerRole> getDefaultFormation();
     int getId() const;
 
-    static QVector<PlayerRole> getDefaultFormation();
+    QPointF getDefaultRolePosition(PlayerRole::RoleName roleName) const;
 
+    void tick();
 protected:
     Team team;
 };

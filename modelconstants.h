@@ -29,7 +29,8 @@ const double CORNER_ARC_R = 1.0 * 2;
 const double PLAYER_SIZE = 1;
 const double PLAYER_WIDGET_SIZE = 1.0;
 const double KICKABLE_MARGIN = 0.7;
-const double BALL_SIZE = 1;
+const double BALL_SIZE = 0.085;
+const double BALL_WIDGET_SIZE = 1;
 const double KICKABLE_AREA = PLAYER_SIZE + KICKABLE_MARGIN + BALL_SIZE;
 
 const int TOTAL_FIELD_LENGTH = PITCH_LENGTH + 2*PITCH_MARGIN;
@@ -40,5 +41,14 @@ const double team_too_far_length = 60.0;
 
 const double quantize_step = 0.1;
 const double quantize_step_l = 0.01;
+
+int toPixmapCoord(double value);
+
+const int d_PITCH_LENGTH = toPixmapCoord(PITCH_LENGTH);
+const int d_PITCH_WIDTH = toPixmapCoord(PITCH_WIDTH);
+const int d_PITCH_MARGIN = toPixmapCoord(PITCH_MARGIN);
+
+const int d_TOTAL_IMAGE_WIDTH = d_PITCH_LENGTH + 2*d_PITCH_MARGIN;
+const int d_TOTAL_IMAGE_HEIGHT = d_PITCH_WIDTH + 2*d_PITCH_MARGIN;
 
 #endif // MODELCONSTANTS_H

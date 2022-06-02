@@ -13,6 +13,7 @@ class Ball:
 public:
     Ball();
     Ball(double _x, double _y);
+    Ball(Ball &_ball);
     double getX() const;
     double getY() const;
     QRectF getBallRect();
@@ -20,6 +21,7 @@ public:
     void readJSON(const QJsonObject &json);
 
     void tick();
+
 };
 
 #endif // BALL_H

@@ -6,8 +6,8 @@ const Qt::GlobalColor enemyColor = Qt::red;
 const Qt::GlobalColor ballColor = Qt::black;
 const Qt::GlobalColor ballFillColor = Qt::white;
 
-const QRect playArea(r_PITCH_MARGIN, r_PITCH_MARGIN, r_PITCH_LENGTH, r_PITCH_WIDTH);
-const QRect wholeFieldArea(0, 0, r_TOTAL_FIELD_LENGTH, r_TOTAL_FIELD_WIDTH);
+const QRect playArea(PITCH_MARGIN, PITCH_MARGIN, PITCH_LENGTH, PITCH_WIDTH);
+const QRect wholeFieldArea(0, 0, TOTAL_FIELD_LENGTH, TOTAL_FIELD_WIDTH);
 
 
 RenderArea::RenderArea(QWidget* parent, World* _world):QWidget(parent)
@@ -36,7 +36,7 @@ void RenderArea::update() {
 
 void RenderArea::DrawCircle() {
     QPainter painter(image);
-    painter.setWindow(QRect(r_PITCH_MARGIN, r_PITCH_MARGIN, r_TOTAL_FIELD_LENGTH, r_TOTAL_FIELD_WIDTH));
+    painter.setWindow(QRect(PITCH_MARGIN, PITCH_MARGIN, TOTAL_FIELD_LENGTH, TOTAL_FIELD_WIDTH));
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     painter.setPen(QPen(Qt::red));
@@ -135,37 +135,37 @@ void RenderArea::drawField() {
     painter.drawRect(playArea);
 
     //center circle
-    painter.drawEllipse(getRectFCircleAtCenter(r_TOTAL_FIELD_LENGTH/2, r_TOTAL_FIELD_WIDTH/2, 2*r_CENTER_CIRCLE_R));
+    painter.drawEllipse(getRectFCircleAtCenter(TOTAL_FIELD_LENGTH/2, TOTAL_FIELD_WIDTH/2, 2*CENTER_CIRCLE_R));
     //center line
-    painter.drawLine(QLineF(r_TOTAL_FIELD_LENGTH/2, r_PITCH_MARGIN, r_TOTAL_FIELD_LENGTH/2, r_TOTAL_FIELD_WIDTH-r_PITCH_MARGIN));
+    painter.drawLine(QLineF(TOTAL_FIELD_LENGTH/2, PITCH_MARGIN, TOTAL_FIELD_LENGTH/2, TOTAL_FIELD_WIDTH-PITCH_MARGIN));
 
     //left goal
     painter.setBrush(QBrush(Qt::black, Qt::SolidPattern));
-    painter.drawRect(QRectF(r_PITCH_MARGIN - r_GOAL_DEPTH, r_TOTAL_FIELD_WIDTH/2 - r_GOAL_WIDTH/2, r_GOAL_DEPTH, r_GOAL_WIDTH));
+    painter.drawRect(QRectF(PITCH_MARGIN - GOAL_DEPTH, TOTAL_FIELD_WIDTH/2 - GOAL_WIDTH/2, GOAL_DEPTH, GOAL_WIDTH));
     painter.setBrush(Qt::NoBrush);
     //goal area
-    painter.drawRect(QRectF(r_PITCH_MARGIN, r_TOTAL_FIELD_WIDTH/2 - r_GOAL_AREA_WIDTH/2, r_GOAL_AREA_LENGTH, r_GOAL_AREA_WIDTH));
+    painter.drawRect(QRectF(PITCH_MARGIN, TOTAL_FIELD_WIDTH/2 - GOAL_AREA_WIDTH/2, GOAL_AREA_LENGTH, GOAL_AREA_WIDTH));
     //penalty area
-    painter.drawRect(QRectF(r_PITCH_MARGIN, r_TOTAL_FIELD_WIDTH/2 - r_PENALTY_AREA_WIDTH/2, r_PENALTY_AREA_LENGTH, r_PENALTY_AREA_WIDTH));
+    painter.drawRect(QRectF(PITCH_MARGIN, TOTAL_FIELD_WIDTH/2 - PENALTY_AREA_WIDTH/2, PENALTY_AREA_LENGTH, PENALTY_AREA_WIDTH));
     //penalty arc
-    painter.drawArc(QRectF(r_PITCH_MARGIN+r_PENALTY_SPOT_DIST-r_PENALTY_ARC_R, r_TOTAL_FIELD_WIDTH/2-r_PENALTY_ARC_R, 2*r_PENALTY_ARC_R, 2*r_PENALTY_ARC_R), -53*16, 106*16);
+    painter.drawArc(QRectF(PITCH_MARGIN+PENALTY_SPOT_DIST-PENALTY_ARC_R, TOTAL_FIELD_WIDTH/2-PENALTY_ARC_R, 2*PENALTY_ARC_R, 2*PENALTY_ARC_R), -53*16, 106*16);
 
     //right goal
     painter.setBrush(QBrush(Qt::black, Qt::SolidPattern));
-    painter.drawRect(QRectF(r_TOTAL_FIELD_LENGTH - r_PITCH_MARGIN, r_TOTAL_FIELD_WIDTH/2 - r_GOAL_WIDTH/2, r_GOAL_DEPTH, r_GOAL_WIDTH));
+    painter.drawRect(QRectF(TOTAL_FIELD_LENGTH - PITCH_MARGIN, TOTAL_FIELD_WIDTH/2 - GOAL_WIDTH/2, GOAL_DEPTH, GOAL_WIDTH));
     painter.setBrush(Qt::NoBrush);
     //goal area
-    painter.drawRect(QRectF(r_TOTAL_FIELD_LENGTH - r_PITCH_MARGIN - r_GOAL_AREA_LENGTH, r_TOTAL_FIELD_WIDTH/2 - r_GOAL_AREA_WIDTH/2, r_GOAL_AREA_LENGTH, r_GOAL_AREA_WIDTH));
+    painter.drawRect(QRectF(TOTAL_FIELD_LENGTH - PITCH_MARGIN - GOAL_AREA_LENGTH, TOTAL_FIELD_WIDTH/2 - GOAL_AREA_WIDTH/2, GOAL_AREA_LENGTH, GOAL_AREA_WIDTH));
     //penalty area
-    painter.drawRect(QRectF(r_TOTAL_FIELD_LENGTH - r_PITCH_MARGIN - r_PENALTY_AREA_LENGTH, r_TOTAL_FIELD_WIDTH/2 - r_PENALTY_AREA_WIDTH/2, r_PENALTY_AREA_LENGTH, r_PENALTY_AREA_WIDTH));
+    painter.drawRect(QRectF(TOTAL_FIELD_LENGTH - PITCH_MARGIN - PENALTY_AREA_LENGTH, TOTAL_FIELD_WIDTH/2 - PENALTY_AREA_WIDTH/2, PENALTY_AREA_LENGTH, PENALTY_AREA_WIDTH));
     //penalty arc
-    painter.drawArc(QRectF(r_TOTAL_FIELD_LENGTH - r_PITCH_MARGIN - r_PENALTY_SPOT_DIST - r_PENALTY_ARC_R, r_TOTAL_FIELD_WIDTH/2-r_PENALTY_ARC_R, 2*r_PENALTY_ARC_R, 2*r_PENALTY_ARC_R), 127*16, 106*16);
+    painter.drawArc(QRectF(TOTAL_FIELD_LENGTH - PITCH_MARGIN - PENALTY_SPOT_DIST - PENALTY_ARC_R, TOTAL_FIELD_WIDTH/2-PENALTY_ARC_R, 2*PENALTY_ARC_R, 2*PENALTY_ARC_R), 127*16, 106*16);
 
     //corner arcs, clockwise from top-left
-    painter.drawArc(QRectF(r_PITCH_MARGIN-r_CORNER_ARC_R/2, r_PITCH_MARGIN-r_CORNER_ARC_R/2, r_CORNER_ARC_R, r_CORNER_ARC_R), -90*16, 90*16);
-    painter.drawArc(QRectF(r_TOTAL_FIELD_LENGTH - r_PITCH_MARGIN-r_CORNER_ARC_R/2, r_PITCH_MARGIN-r_CORNER_ARC_R/2, r_CORNER_ARC_R, r_CORNER_ARC_R), 180*16, 90*16);
-    painter.drawArc(QRectF(r_TOTAL_FIELD_LENGTH - r_PITCH_MARGIN-r_CORNER_ARC_R/2, r_TOTAL_FIELD_WIDTH - r_PITCH_MARGIN-r_CORNER_ARC_R/2, r_CORNER_ARC_R, r_CORNER_ARC_R), 90*16, 90*16);
-    painter.drawArc(QRectF(r_PITCH_MARGIN-r_CORNER_ARC_R/2, r_TOTAL_FIELD_WIDTH - r_PITCH_MARGIN-r_CORNER_ARC_R/2, r_CORNER_ARC_R, r_CORNER_ARC_R), 0*16, 90*16);
+    painter.drawArc(QRectF(PITCH_MARGIN-CORNER_ARC_R/2, PITCH_MARGIN-CORNER_ARC_R/2, CORNER_ARC_R, CORNER_ARC_R), -90*16, 90*16);
+    painter.drawArc(QRectF(TOTAL_FIELD_LENGTH - PITCH_MARGIN-CORNER_ARC_R/2, PITCH_MARGIN-CORNER_ARC_R/2, CORNER_ARC_R, CORNER_ARC_R), 180*16, 90*16);
+    painter.drawArc(QRectF(TOTAL_FIELD_LENGTH - PITCH_MARGIN-CORNER_ARC_R/2, TOTAL_FIELD_WIDTH - PITCH_MARGIN-CORNER_ARC_R/2, CORNER_ARC_R, CORNER_ARC_R), 90*16, 90*16);
+    painter.drawArc(QRectF(PITCH_MARGIN-CORNER_ARC_R/2, TOTAL_FIELD_WIDTH - PITCH_MARGIN-CORNER_ARC_R/2, CORNER_ARC_R, CORNER_ARC_R), 0*16, 90*16);
 
 }
 
@@ -205,7 +205,7 @@ void RenderArea::drawWorld(bool doDrawRoleRects = false) {
     drawField();
 
     if (doDrawRoleRects) {
-        drawRoleRects(Player().getRoles());
+        drawRoleRects(Player().getDefaultFormation());
     }
 
     for (Player& ally: world->getTeamAlly()) {

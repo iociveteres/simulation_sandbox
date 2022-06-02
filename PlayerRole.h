@@ -29,22 +29,24 @@ public:
                double _boxWidth, double _boxLength,
                double _pPosInBox_x, double _pPosInBox_y,
                RoleName _Role);
-    RoleName getPlayerRole() const;
     QRectF  getRoleRect();
     QPointF getRolePoint();
     double getRoleMargin() const;
+    PlayerRole::RoleName getRoleName() const;
 
     QList<PlayerRole::RoleName> getNeighbourRoles();
 
-    double getMarginFromGoalX() const;
-    void setMarginFromGoalX(double value);
+    double getFormationMargin_x() const;
+    void setFormationMargin_x(double value);
 
-    double getMarginFromGoalY() const;
-    void setMarginFromGoalY(double value);
+    double getFormationMargin_y() const;
+    void setFormationMargin_y(double value);
+
+
 
 private:
-    double marginFromGoalX = 0;
-    double marginFromGoalY = r_PITCH_LENGTH/10;
+    double curFormationMargin_x = PITCH_LENGTH/10;
+    double curFormationMargin_y = 0;
     double roleMargin;
     double boxPos_x;
     double boxPos_y;
@@ -52,7 +54,7 @@ private:
     double boxLength;
     double pPosInBox_x;
     double pPosInBox_y;;
-    RoleName playerRole;
+    PlayerRole::RoleName roleName;
 
     static const QPointF goalPoint;
 };
@@ -108,10 +110,10 @@ class Goalie: public PlayerRole {
 public:
     Goalie(
            double margin = 0,
-           double boxPos_x = r_PITCH_LENGTH/16,
-           double boxPos_y = r_PITCH_WIDTH/2,
-           double boxWidth = r_PITCH_WIDTH/3,
-           double boxLength = r_PITCH_LENGTH/5,
+           double boxPos_x = PITCH_LENGTH/16,
+           double boxPos_y = PITCH_WIDTH/2,
+           double boxWidth = PITCH_WIDTH/3,
+           double boxLength = PITCH_LENGTH/5,
            double pPosInBox_x = 0,
            double pPosInBox_y = 0,
            RoleName Role = RoleName::Goalie):
@@ -127,12 +129,12 @@ class DefenderRight: public Defender {
 public:
     DefenderRight(
            double margin = 0,
-           double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*7,
-           double boxWidth = r_PITCH_WIDTH/4,
-           double boxLength = r_PITCH_LENGTH/5,
-           double pPosInBox_x = r_PITCH_LENGTH/20,
-           double pPosInBox_y = -r_PITCH_WIDTH/16,
+           double boxPos_x = PITCH_LENGTH/10,
+           double boxPos_y = PITCH_WIDTH/8*7,
+           double boxWidth = PITCH_WIDTH/4,
+           double boxLength = PITCH_LENGTH/5,
+           double pPosInBox_x = PITCH_LENGTH/20,
+           double pPosInBox_y = -PITCH_WIDTH/16,
            RoleName Role = RoleName::DefenderRight):
         Defender(margin,
                  boxPos_x, boxPos_y,
@@ -147,11 +149,11 @@ class DefenderRightCentre: public Defender {
 public:
     DefenderRightCentre(
            double margin = 0,
-           double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*5,
-           double boxWidth = r_PITCH_WIDTH/4,
-           double boxLength = r_PITCH_LENGTH/5,
-           double pPosInBox_x = r_PITCH_LENGTH/20,
+           double boxPos_x = PITCH_LENGTH/10,
+           double boxPos_y = PITCH_WIDTH/8*5,
+           double boxWidth = PITCH_WIDTH/4,
+           double boxLength = PITCH_LENGTH/5,
+           double pPosInBox_x = PITCH_LENGTH/20,
            double pPosInBox_y = 0,
            RoleName Role = RoleName::DefenderRightCentre):
         Defender(margin,
@@ -167,11 +169,11 @@ class DefenderLeftCentre: public Defender {
 public:
     DefenderLeftCentre(
            double margin = 0,
-           double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*3,
-           double boxWidth = r_PITCH_WIDTH/4,
-           double boxLength = r_PITCH_LENGTH/5,
-           double pPosInBox_x = r_PITCH_LENGTH/20,
+           double boxPos_x = PITCH_LENGTH/10,
+           double boxPos_y = PITCH_WIDTH/8*3,
+           double boxWidth = PITCH_WIDTH/4,
+           double boxLength = PITCH_LENGTH/5,
+           double pPosInBox_x = PITCH_LENGTH/20,
            double pPosInBox_y = 0,
            RoleName Role = RoleName::DefenderLeftCentre):
         Defender(margin,
@@ -187,12 +189,12 @@ class DefenderLeft: public Defender {
 public:
     DefenderLeft(
            double margin = 0,
-           double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*1,
-           double boxWidth = r_PITCH_WIDTH/4,
-           double boxLength = r_PITCH_LENGTH/5,
-           double pPosInBox_x = r_PITCH_LENGTH/20,
-           double pPosInBox_y = r_PITCH_WIDTH/16,
+           double boxPos_x = PITCH_LENGTH/10,
+           double boxPos_y = PITCH_WIDTH/8*1,
+           double boxWidth = PITCH_WIDTH/4,
+           double boxLength = PITCH_LENGTH/5,
+           double pPosInBox_x = PITCH_LENGTH/20,
+           double pPosInBox_y = PITCH_WIDTH/16,
            RoleName Role = RoleName::DefenderLeft):
         Defender(margin,
                  boxPos_x, boxPos_y,
@@ -206,13 +208,13 @@ class SemidefenderRight: public Semidefender {
 
 public:
     SemidefenderRight(
-           double margin = r_PITCH_LENGTH/5,
-           double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*7,
-           double boxWidth = r_PITCH_WIDTH/4,
-           double boxLength = r_PITCH_LENGTH/5,
+           double margin = PITCH_LENGTH/5,
+           double boxPos_x = PITCH_LENGTH/10,
+           double boxPos_y = PITCH_WIDTH/8*7,
+           double boxWidth = PITCH_WIDTH/4,
+           double boxLength = PITCH_LENGTH/5,
            double pPosInBox_x = 0,
-           double pPosInBox_y = -r_PITCH_WIDTH/16,
+           double pPosInBox_y = -PITCH_WIDTH/16,
            RoleName Role = RoleName::SemidefenderRight):
         Semidefender(margin,
                      boxPos_x, boxPos_y,
@@ -225,11 +227,11 @@ class SemidefenderRightCentre: public Semidefender {
 
 public:
     SemidefenderRightCentre(
-           double margin = r_PITCH_LENGTH/5,
-           double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*5,
-           double boxWidth = r_PITCH_WIDTH/4,
-           double boxLength = r_PITCH_LENGTH/5,
+           double margin = PITCH_LENGTH/5,
+           double boxPos_x = PITCH_LENGTH/10,
+           double boxPos_y = PITCH_WIDTH/8*5,
+           double boxWidth = PITCH_WIDTH/4,
+           double boxLength = PITCH_LENGTH/5,
            double pPosInBox_x = 0,
            double pPosInBox_y = 0,
            RoleName Role = RoleName::SemidefenderRightCentre):
@@ -245,11 +247,11 @@ class SemidefenderLeftCentre: public Semidefender {
 
 public:
     SemidefenderLeftCentre(
-           double margin = r_PITCH_LENGTH/5,
-           double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*3,
-           double boxWidth = r_PITCH_WIDTH/4,
-           double boxLength = r_PITCH_LENGTH/5,
+           double margin = PITCH_LENGTH/5,
+           double boxPos_x = PITCH_LENGTH/10,
+           double boxPos_y = PITCH_WIDTH/8*3,
+           double boxWidth = PITCH_WIDTH/4,
+           double boxLength = PITCH_LENGTH/5,
            double pPosInBox_x = 0,
            double pPosInBox_y = 0,
            RoleName Role = RoleName::SemidefenderLeftCentre):
@@ -265,13 +267,13 @@ class SemidefenderLeft: public Semidefender {
 
 public:
     SemidefenderLeft(
-           double margin = r_PITCH_LENGTH/5,
-           double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*1,
-           double boxWidth = r_PITCH_WIDTH/4,
-           double boxLength = r_PITCH_LENGTH/5,
+           double margin = PITCH_LENGTH/5,
+           double boxPos_x = PITCH_LENGTH/10,
+           double boxPos_y = PITCH_WIDTH/8*1,
+           double boxWidth = PITCH_WIDTH/4,
+           double boxLength = PITCH_LENGTH/5,
            double pPosInBox_x = 0,
-           double pPosInBox_y = r_PITCH_WIDTH/16,
+           double pPosInBox_y = PITCH_WIDTH/16,
            RoleName Role = RoleName::SemidefenderLeft):
         Semidefender(margin,
                      boxPos_x, boxPos_y,
@@ -284,13 +286,13 @@ class AttackerRight: public Attacker {
 
 public:
     AttackerRight(
-           double margin = r_PITCH_LENGTH/2.5,
-           double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*6,
-           double boxWidth = r_PITCH_WIDTH/2,
-           double boxLength = r_PITCH_LENGTH/5,
+           double margin = PITCH_LENGTH/2.5,
+           double boxPos_x = PITCH_LENGTH/10,
+           double boxPos_y = PITCH_WIDTH/8*6,
+           double boxWidth = PITCH_WIDTH/2,
+           double boxLength = PITCH_LENGTH/5,
            double pPosInBox_x = 0,
-           double pPosInBox_y = r_PITCH_WIDTH/4,
+           double pPosInBox_y = PITCH_WIDTH/4,
            RoleName Role = RoleName::AttackerRight):
         Attacker(margin,
                  boxPos_x, boxPos_y,
@@ -303,13 +305,13 @@ class AttackerLeft: public Attacker {
 
 public:
     AttackerLeft(
-           double margin = r_PITCH_LENGTH/2.5,
-           double boxPos_x = r_PITCH_LENGTH/10,
-           double boxPos_y = r_PITCH_WIDTH/8*2,
-           double boxWidth = r_PITCH_WIDTH/2,
-           double boxLength = r_PITCH_LENGTH/5,
+           double margin = PITCH_LENGTH/2.5,
+           double boxPos_x = PITCH_LENGTH/10,
+           double boxPos_y = PITCH_WIDTH/8*2,
+           double boxWidth = PITCH_WIDTH/2,
+           double boxLength = PITCH_LENGTH/5,
            double pPosInBox_x = 0,
-           double pPosInBox_y = -r_PITCH_WIDTH/4,
+           double pPosInBox_y = -PITCH_WIDTH/4,
            RoleName Role = RoleName::AttackerLeft):
         Attacker(margin,
                  boxPos_x, boxPos_y,

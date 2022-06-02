@@ -17,8 +17,13 @@ void Player::setPlayerRole(const PlayerRole &value)
 
 Player::Player()
 {
-    playerCount++;
+    int a;
+}
+
+Player::Player(bool *a)
+{
     id = playerCount;
+    playerCount++;
 }
 
 Player::Player(Team _team)
@@ -33,11 +38,76 @@ Player::Player(Team _team, double _x, double _y, double _angle):
 {
     team = _team;
     id = playerCount;
-    playerCount++;
+    //playerCount++;
+}
+
+Player::Player(Team _team, double _x, double _y, double _angle, int _id):
+    BaseEntity(_x, _y, _angle)
+{
+    playerRole = PlayerRole();
+    team = _team;
+    id = _id;
+
+    //playerCount++;
+}
+
+Player::Player(const Player &p): BaseEntity(p)
+{
+    x = p.x;
+    y = p.y;
+    angle = p.angle;
+    playerRole = p.playerRole;
+    team = p.team;
+    id = p.id;
+    velocity = p.velocity;
+    acceleration = p.acceleration;
 }
 
 Player::~Player()
 {
+}
+
+PlayerRole Player::choosePlayerRole()
+{
+    switch (assignedRole) {
+    case PlayerRole::DefenderLeft:
+        return DefenderLeft();
+        break;
+    case PlayerRole::DefenderLeftCentre:
+        return DefenderLeftCentre();
+        break;
+    case PlayerRole::DefenderRightCentre:
+        return DefenderRightCentre();
+        break;
+    case PlayerRole::DefenderRight:
+        return DefenderRight();
+        break;
+    case PlayerRole::SemidefenderLeft:
+        return SemidefenderLeft();
+        break;
+    case PlayerRole::SemidefenderLeftCentre:
+        return SemidefenderLeftCentre();
+        break;
+    case PlayerRole::SemidefenderRightCentre:
+        return SemidefenderRightCentre();
+        break;
+    case PlayerRole::SemidefenderRight:
+        return SemidefenderRight();
+        break;
+    case PlayerRole::AttackerLeft:
+        return AttackerLeft();
+        break;
+    case PlayerRole::AttackerRight:
+        return AttackerRight();
+        break;
+    case PlayerRole::Goalie:
+        return::Goalie();
+        break;
+    case PlayerRole::Unassigned:
+        return PlayerRole();
+        break;
+    }
+    return PlayerRole();
 }
 
 int Player::getPlayerCount()
@@ -85,6 +155,12 @@ void Player::readJSON(const QJsonObject &json)
 
     if (json.contains("angle") && json["angle"].isDouble())
         angle = json["angle"].toDouble();
+
+    if (json.contains("velocity") && json["velocity"].isObject())
+         velocity.readJSON(json["velocity"].toObject());
+
+    if (json.contains("acceleration") && json["acceleration"].isObject())
+         acceleration.readJSON(json["acceleration"].toObject());
 }
 
 void Player::writeJSON(QJsonObject &json) const
@@ -149,7 +225,7 @@ void Player::tick()
         velocity.y /= (velocityAbs / PLAYER_SPEED_MAX);
     }
 
-    double accelerationAbs = vectorLength(velocity.x, velocity.y);
+    double accelerationAbs = vectorLength(acceleration.x, acceleration.y);
     if (accelerationAbs > PLAYER_SPEED_MAX) {
         acceleration.x /= (accelerationAbs / PLAYER_SPEED_MAX);
         acceleration.y /= (accelerationAbs / PLAYER_SPEED_MAX);

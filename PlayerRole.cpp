@@ -1,6 +1,6 @@
 #include "PlayerRole.h"
 
-const QPointF goalPoint = QPointF(0, r_PITCH_WIDTH/2);
+const QPointF goalPoint = QPointF(0, PITCH_WIDTH/2);
 
 PlayerRole::PlayerRole()
 {
@@ -20,20 +20,20 @@ PlayerRole::PlayerRole(double _margin,
     boxLength = _boxLength;
     pPosInBox_x = _pPosInBox_x;
     pPosInBox_y = _pPosInBox_y;
-    playerRole = _Role;
+    roleName = _Role;
 }
 
 QRectF PlayerRole::getRoleRect()
 {
-    return QRectF(r_PITCH_MARGIN + boxPos_x - boxLength/2 + roleMargin + curFormationMargin_x,
-                  r_PITCH_MARGIN + boxPos_y - boxWidth/2 + curFormationMargin_y,
+    return QRectF(PITCH_MARGIN + boxPos_x - boxLength/2 + roleMargin + curFormationMargin_x,
+                  PITCH_MARGIN + boxPos_y - boxWidth/2 + curFormationMargin_y,
                   boxLength, boxWidth);
 }
 
 QPointF PlayerRole::getRolePoint()
 {
-    return QPointF(r_PITCH_MARGIN + boxPos_x + roleMargin + pPosInBox_x + curFormationMargin_x,
-                   r_PITCH_MARGIN + boxPos_y + pPosInBox_y + curFormationMargin_y);
+    return QPointF(PITCH_MARGIN + boxPos_x + roleMargin + pPosInBox_x + curFormationMargin_x,
+                   PITCH_MARGIN + boxPos_y + pPosInBox_y + curFormationMargin_y);
 }
 
 double PlayerRole::getRoleMargin() const
@@ -44,7 +44,7 @@ double PlayerRole::getRoleMargin() const
 QList<PlayerRole::RoleName> PlayerRole::getNeighbourRoles()
 {
     QList<PlayerRole::RoleName> neighbourRoles;
-    switch (this->playerRole) {
+    switch (this->roleName) {
     case PlayerRole::DefenderLeft:
         neighbourRoles.append(PlayerRole::DefenderLeftCentre);
         neighbourRoles.append(PlayerRole::SemidefenderLeft);
@@ -123,5 +123,10 @@ double PlayerRole::getFormationMargin_y() const
 void PlayerRole::setFormationMargin_y(double value)
 {
     curFormationMargin_y = value;
+}
+
+PlayerRole::RoleName PlayerRole::getRoleName() const
+{
+    return roleName;
 }
 

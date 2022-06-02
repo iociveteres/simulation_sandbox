@@ -5,14 +5,6 @@ QPointF allyGoalTopPoint(PITCH_MARGIN, TOTAL_FIELD_WIDTH/2 - GOAL_WIDTH/2);
 QPointF allyGoalBotPoint(PITCH_MARGIN, TOTAL_FIELD_WIDTH/2 - GOAL_WIDTH/2 + GOAL_WIDTH);
 const QPointF leftPitchRimTopPoint(PITCH_MARGIN, PITCH_MARGIN);
 const QPointF leftPitchRimBotPoint(PITCH_MARGIN, PITCH_MARGIN + PITCH_WIDTH);
-const QRectF defendGoalArea(0,
-                              PITCH_WIDTH/3,
-                              PENALTY_AREA_LENGTH + 0.5,
-                              PITCH_WIDTH/3);
-QLineF defendGoalLine(GOAL_AREA_LENGTH + 2.5,
-                              PITCH_MARGIN + PITCH_WIDTH/3,
-                              PITCH_MARGIN + GOAL_AREA_LENGTH + 2.5,
-                              PITCH_MARGIN + 2*PITCH_WIDTH/3);
 
 double PlayerAI::getRoleMargin() const
 {
@@ -22,19 +14,21 @@ double PlayerAI::getRoleMargin() const
 PlayerAI::PlayerAI():
     Player()
 {
-
+    worldModel = new PlayerWorldModel();
 }
 
-PlayerAI::PlayerAI(Team _team):
+PlayerAI::PlayerAI(Team _team, World* _world):
     Player(_team)
 {
-
+    worldLink = _world;
+    worldModel = new PlayerWorldModel();
 }
 
-PlayerAI::PlayerAI(Team _team, int _x, int _y, double _angle):
+PlayerAI::PlayerAI(Team _team, int _x, int _y, double _angle, World* _world):
     Player(_team, _x, _y, _angle)
 {
-
+    worldLink = _world;
+    worldModel = new PlayerWorldModel();
 }
 
 PlayerAI::~PlayerAI()
@@ -44,8 +38,9 @@ PlayerAI::~PlayerAI()
 
 void PlayerAI::cycle()
 {
-    worldModel->update();
-    intention = getIntention();
+    worldModel->update(*worldLink, this);
+    intention = determinePrefferedIntention();
+    qDebug() << "Player " << this->id << " finished cycle succesfully\n";
 }
 
 Action PlayerAI::getIntention() const
@@ -86,34 +81,39 @@ QList<Action> PlayerAI::makePrefferedActionsListOthers()
         QList<Action> actionsOfPlayer;
 
         for (Player e: worldModel->getTeamEnemy()) {
-            Action a = checkMarking(e);
-            a.setPrefferedPoint(getPointMarking(a));
+            Action a = checkMarking(e, p);
+            a.setPrefferedPoint(getPointMarking(a, p));
             actionsOfPlayer.append(a);
         }
         {
-            Action a = checkWaitDefensive();
-            a.setPrefferedPoint(getPointWait());
+            Action a = checkWaitDefensive(p);
+            a.setPrefferedPoint(getPointWait(p));
             actionsOfPlayer.append(a);
         }
         {
-            Action a = checkDefendGoal();
+            Action a = checkIntercept(p);
+            a.setPrefferedPoint(getPointWait(p));
+            actionsOfPlayer.append(a);
+        }
+        {
+            Action a = checkDefendGoal(p);
             Action b = a;
-            std::tuple<QPointF, QPointF> t = getPointsDefendGoal(a);
+            std::tuple<QPointF, QPointF> t = getPointsDefendGoal(a, p);
             a.setPrefferedPoint(std::get<0>(t));
             b.setPrefferedPoint(std::get<1>(t));
             actionsOfPlayer.append(a);
             actionsOfPlayer.append(b);
         }
-        // set cost
-        for (Action a: actionsOfPlayer) {
-            a.setCost(distance(a.getPrefferedPoint(),
-                               worldModel->
-                               getAllyById(a.getExecutorId()).
-                               getCoordinatesPoint()));
-        }
-
         actionsOfPlayers.append(actionsOfPlayer);
     }
+    // set cost
+//    for (Action a: actionsOfPlayers) {
+//        std::tuple<bool, Player> t = worldModel->
+//                getAllyById(a.getExecutorId());
+//        Player p = std::get<1>(t);
+//        a.setCost(distance(a.getPrefferedPoint(),
+//                           p.getCoordinatesPoint()));
+//    }
 
     return actionsOfPlayers;
 }
@@ -122,30 +122,35 @@ QList<Action> PlayerAI::makePrefferedActionsListMe() {
     QList<Action> actionsOfPlayer;
 
     for (Player e: worldModel->getTeamEnemy()) {
-        Action a = checkMarking(e);
-        a.setPrefferedPoint(getPointMarking(a));
+        Action a = checkMarking(e, *this);
+        a.setPrefferedPoint(getPointMarking(a, *this));
         actionsOfPlayer.append(a);
     }
     {
-        Action a = checkWaitDefensive();
-        a.setPrefferedPoint(getPointWait());
+        Action a = checkWaitDefensive(*this);
+        a.setPrefferedPoint(getPointWait(*this));
         actionsOfPlayer.append(a);
     }
     {
-        Action a = checkDefendGoal();
+        Action a = checkIntercept(*this);
+        a.setPrefferedPoint(getPointWait(*this));
+        actionsOfPlayer.append(a);
+    }
+    {
+        Action a = checkDefendGoal(*this);
         Action b = a;
-        std::tuple<QPointF, QPointF> t = getPointsDefendGoal(a);
+        std::tuple<QPointF, QPointF> t = getPointsDefendGoal(a, *this);
         a.setPrefferedPoint(std::get<0>(t));
         b.setPrefferedPoint(std::get<1>(t));
         actionsOfPlayer.append(a);
         actionsOfPlayer.append(b);
     }
     // set cost
-    for (Action a: actionsOfPlayer) {
-        a.setCost(distance(a.getPrefferedPoint(),
-                           this->
-                           getCoordinatesPoint()));
-    }
+//    for (Action a: actionsOfPlayer) {
+//        a.setCost(distance(a.getPrefferedPoint(),
+//                           this->
+//                           getCoordinatesPoint()));
+//    }
 
     return actionsOfPlayer;
 }
@@ -155,25 +160,24 @@ QList<Action> PlayerAI::makePrefferedActionsListNeighbours() {
     PlayerRole normalPlayerRole = this->getPlayerRole();
     for (PlayerRole::RoleName roleName:
          this->getPlayerRole().getNeighbourRoles()) {
-        if (checkAllyIsInPlace(roleName)) {
-
-        }
+        if (checkAllyIsInPlace(roleName))
+            continue;
         this->setPlayerRole(
                     this->worldModel->getPlayerRoleByRoleName(roleName));
         // проверять имеет смысл только те действия,
         // которые зависят от роли игрока
         for (Player e: worldModel->getTeamEnemy()) {
-            Action a = checkMarking(e);
-            a.setPrefferedPoint(getPointMarking(a));
+            Action a = checkMarking(e, *this);
+            a.setPrefferedPoint(getPointMarking(a, *this));
             actionsOfPlayer.append(a);
         }
     }
     // decrease desirebility of actions for other roles and set cost
     for (Action a: actionsOfPlayer) {
         a.setDesirebility(a.getDesirebility() - 7);
-        a.setCost(distance(a.getPrefferedPoint(),
-                           this->
-                           getCoordinatesPoint()));
+//        a.setCost(distance(a.getPrefferedPoint(),
+//                           this->
+//                           getCoordinatesPoint()));
     }
     this->setPlayerRole(normalPlayerRole);
 
@@ -227,31 +231,45 @@ Action PlayerAI::determinePrefferedIntention()
     return prefferedAction;
 }
 
-
-
-Action PlayerAI::checkMarking(Player enemy)
+Action PlayerAI::checkMarking(Player enemy, Player player)
 {
     const double a = 1;
     const double b = 1;
     const double c = 1;
+    const double d = 1;
     double distBtwEnemyAndBall =
             distance(enemy.getCoordinatesPoint(),
                      worldModel->getBall()->getCoordinatesPoint());
-    distBtwEnemyAndBall = limit(distBtwEnemyAndBall, 0, 30);
+    distBtwEnemyAndBall = limit(distBtwEnemyAndBall, 1, 100);
+    distBtwEnemyAndBall = log(distBtwEnemyAndBall);
+
     double distBtwEnemyAndMe =
             distance(enemy.getCoordinatesPoint(),
-                     this->getCoordinatesPoint());
+                     player.getCoordinatesPoint());
+    distBtwEnemyAndMe = limit(distBtwEnemyAndMe, 1, 100);
+    distBtwEnemyAndMe = log(distBtwEnemyAndMe);
+
     double distBtwEnemyAndDefensiveLine = enemy.getX() - getRoleMargin();
+    distBtwEnemyAndDefensiveLine = limit(distBtwEnemyAndDefensiveLine, 1, 40);
+    distBtwEnemyAndDefensiveLine = log(distBtwEnemyAndDefensiveLine);
+
+    double enemyInMyZone = 0;
+    if (player.getPlayerRole().getRoleRect().contains(enemy.getCoordinatesPoint()))
+        enemyInMyZone = 30;
 
     double desirebility =
-            a * distBtwEnemyAndBall +
-            b * distBtwEnemyAndMe +
-            c * distBtwEnemyAndDefensiveLine;
+            a * 5/distBtwEnemyAndBall +
+            b * 5/distBtwEnemyAndMe +
+            c * 30/distBtwEnemyAndDefensiveLine +
+            d * enemyInMyZone;
 
-    return Action(Action::Mark, this->getId(), enemy.getId(), desirebility);
+    desirebility = limit(desirebility, 0, 100);
+    double cost = distance(getPrefferedPoint(),
+                           this->getCoordinatesPoint());
+    return Action(Action::Mark, player.getId(), enemy.getId(), desirebility, cost);
 }
 
-Action PlayerAI::checkDefendGoal()
+Action PlayerAI::checkDefendGoal(Player player)
 {
     const double a = 1;
     const double b = 1;
@@ -260,39 +278,40 @@ Action PlayerAI::checkDefendGoal()
     double distBtwGoalAndBall =
             distance(QPointF(PITCH_MARGIN, TOTAL_FIELD_WIDTH/2),
                      worldModel->getBall()->getCoordinatesPoint());
+    distBtwGoalAndBall = limit(distBtwGoalAndBall, 1, 100);
+    distBtwGoalAndBall = log(distBtwGoalAndBall);
 
     double ballIsControlledByEnemy;
-    try {
-        worldModel->getEnemyControllingBall();
-        ballIsControlledByEnemy = 20;
-    }  catch (std::runtime_error const &e) {
-        //std::string s = e.what();
+    std::tuple<bool, Player> t = worldModel->getEnemyControllingBall();
+    if (std::get<0>(t))
+        ballIsControlledByEnemy = 5;
+    else
         ballIsControlledByEnemy = 0;
-    }
+
     double lessThan2AlliesDefendGoal;
     int howManyDefend = worldModel->getHowManyPlayersAreInArea(findDefendGoalArea());
     if (howManyDefend < 2) {
-        lessThan2AlliesDefendGoal = 20;
+        lessThan2AlliesDefendGoal = 10;
     } else {
         lessThan2AlliesDefendGoal = 0;
     }
 
     double desirebility =
-            a * 1/distBtwGoalAndBall +
+            a * 50/distBtwGoalAndBall +
             b * ballIsControlledByEnemy +
             c * lessThan2AlliesDefendGoal;
+    desirebility = limit(desirebility, 0, 100);
+    double cost = 0;
 
-
-    return Action(Action::DefendGoal, this->getId(), Action::NoEnemyCode, desirebility);
+    return Action(Action::DefendGoal, player.getId(), Action::NoEnemyCode, desirebility, cost);
 }
 
-Action PlayerAI::checkIntercept()
+Action PlayerAI::checkIntercept(Player player)
 {
     const double a = 1;
     const double b = 1;
-    const double c = 1;
 
-    std::tuple<bool, QPointF> t = getPointIntercept();
+    std::tuple<bool, QPointF> t = getPointIntercept(player);
     bool canIreachBall = std::get<0>(t);
     QPointF pointToReachBall = std::get<1>(t);
 
@@ -300,34 +319,40 @@ Action PlayerAI::checkIntercept()
     if (canIreachBall)
         iCanReachBall = 100;
 
-    double iDontKnowMyEnemies = (worldModel->getTeamEnemy().length() - worldModel->getEnemyCount())*6;
-    ;
+    double iDontKnowMyEnemies = (worldModel->getTeamEnemy().length()
+                                 - worldModel->getEnemyCount())*6;
 
     double desirebility =
             a * iCanReachBall +
             b * iDontKnowMyEnemies;
+    desirebility = limit(desirebility, 0, 100);
+    double cost = 0;
 
-
-    return Action(Action::DefendGoal, this->getId(), Action::NoEnemyCode, desirebility);
+    return Action(Action::Intercept, player.getId(),
+                  Action::NoEnemyCode, desirebility, pointToReachBall, cost);
 }
 
-Action PlayerAI::checkWaitDefensive()
+Action PlayerAI::checkWaitDefensive(Player player)
 {
     double desirebility = 25;
-    return Action(Action::Wait, this->getId(), Action::NoEnemyCode, desirebility);
+    double cost = 0;
+    return Action(Action::Wait, player.getId(), Action::NoEnemyCode, desirebility, cost);
 }
 
 
-QPointF PlayerAI::getPointMarking(Action a) {
+QPointF PlayerAI::getPointMarking(Action a, Player player) {
 //    QPointF executorPos = worldModel->
 //            getAllyById(a.getExecutorId()).
 //            getCoordinatesPoint();
     QPointF ballPos = worldModel->
             getBall()->
             getCoordinatesPoint();
-    QPointF againstPos = worldModel->
-            getEnemyById(a.getAgainstId()).
-            getCoordinatesPoint();
+    Player e = worldModel->
+            getEnemyById(a.getAgainstId());
+    int i = ceil(distance(player.getCoordinatesPoint(), e.getCoordinatesPoint())
+                 /PLAYER_SPEED_MAX);
+    QPointF againstPos = e.getCoordinatesPoint()
+            + e.getPVelocity()*i;
     return findPointInDistFromEndOfSegment(againstPos, ballPos, MarkingDist);
 }
 
@@ -352,9 +377,8 @@ QRectF PlayerAI::findDefendGoalArea()
                     PITCH_WIDTH/3);
 }
 
-
 // search for best point in each part
-std::tuple<QPointF, QPointF> PlayerAI::getPointsDefendGoal(Action a) {
+std::tuple<QPointF, QPointF> PlayerAI::getPointsDefendGoal(Action a, Player player) {
     QRectF curDefendGoalArea = findDefendGoalArea();
     QLineF defendGoalLine = QLineF(curDefendGoalArea.left() + 2,
                                    PITCH_WIDTH/3,
@@ -452,7 +476,7 @@ double PlayerAI::getGoalCoverageRatingFromPlayerPos(QPointF playerPos) {
     return fitRating;
 }
 
-std::tuple<bool, QPointF> PlayerAI::getPointIntercept()
+std::tuple<bool, QPointF> PlayerAI::getPointIntercept(Player player)
 {
     int i = 0;
     bool canIReachBallEarlier = true;
@@ -467,7 +491,7 @@ std::tuple<bool, QPointF> PlayerAI::getPointIntercept()
                 break;
             }
         }
-        if (distance(predictedBall->getCoordinatesPoint(), this->getCoordinatesPoint())
+        if (distance(predictedBall->getCoordinatesPoint(), player.getCoordinatesPoint())
                 < PLAYER_SPEED_MAX * i) {
             canIReachBallEarlier = true;
             return std::make_tuple(
@@ -478,8 +502,8 @@ std::tuple<bool, QPointF> PlayerAI::getPointIntercept()
     return std::make_tuple(false, QPointF());
 }
 
-QPointF PlayerAI::getPointWait() {
-    QPointF rolePoint = getPlayerRole().getRolePoint();
+QPointF PlayerAI::getPointWait(Player player) {
+    QPointF rolePoint = player.getPlayerRole().getRolePoint();
     return rolePoint;
 }
 
