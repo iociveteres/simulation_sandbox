@@ -166,6 +166,8 @@ void World::handlePlayButton()
     int duplicates = 0;
     for (Action a: intendedActions) {
         for (Action b: intendedActions) {
+            if (a.getActionType() == Action::Wait)
+                continue;
             if (a == b)
                 duplicates++;
         }

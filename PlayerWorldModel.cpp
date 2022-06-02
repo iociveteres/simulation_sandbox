@@ -207,6 +207,10 @@ void PlayerWorldModel::determineFormation()
 
 double rand(double fMin, double fMax)
 {
+    if (bDefaultRandomSeed)
+        srand (1);
+    else
+        srand (time(NULL));
     double f = (double)rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
 }
@@ -216,24 +220,24 @@ void PlayerWorldModel::introduceNoises()
     for (Player& p: teamAlly) {
         QPointF pos = p.getCoordinatesPoint();
         double strength = log(distance(pos, myself->getCoordinatesPoint())/125)*1.3;
-        double x = pos.x() + rand(-0.3, 0.3) * strength;
-        double y = pos.y() + rand(-0.3, 0.3) * strength;
+        double x = pos.x() + rand(-0.4, 0.4) * strength;
+        double y = pos.y() + rand(-0.4, 0.4) * strength;
         p.setX(x);
         p.setY(y);
     }
     for (Player& p: teamEnemy) {
         QPointF pos = p.getCoordinatesPoint();
         double strength = log(distance(pos, myself->getCoordinatesPoint())/125);
-        double x = pos.x() + rand(-0.3, 0.3) * strength;
-        double y = pos.y() + rand(-0.3, 0.3) * strength;
+        double x = pos.x() + rand(-0.4, 0.4) * strength;
+        double y = pos.y() + rand(-0.4, 0.4) * strength;
         p.setX(x);
         p.setY(y);
     }
     if (ball) {
         QPointF pos = ball->getCoordinatesPoint();
         double strength = log(distance(pos, myself->getCoordinatesPoint())/125);
-        double x = pos.x() + rand(-0.3, 0.3) * strength;
-        double y = pos.y() + rand(-0.3, 0.3) * strength;
+        double x = pos.x() + rand(-0.4, 0.4) * strength;
+        double y = pos.y() + rand(-0.4, 0.4) * strength;
         ball->setX(x);
         ball->setY(y);
     }
