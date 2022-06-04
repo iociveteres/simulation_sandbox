@@ -11,6 +11,7 @@ public:
 
     Velocity();
     void readJSON(const QJsonObject &json);
+    void writeJSON(QJsonObject &json) const;
 };
 
 class Acceleration
@@ -21,5 +22,6 @@ public:
 
     Acceleration();
     void readJSON(const QJsonObject &json);
+    void writeJSON(QJsonObject &json) const;
 };
 #endif // VELOCITY_H

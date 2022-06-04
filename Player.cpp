@@ -182,6 +182,12 @@ void Player::writeJSON(QJsonObject &json) const
     json["x"] = x;
     json["y"] = y;
     json["angle"] = angle;
+    QJsonObject velocityObject;
+    velocity.writeJSON(velocityObject);
+    json["velocity"] = velocityObject;
+    QJsonObject accelerationObject;
+    acceleration.writeJSON(accelerationObject);
+    json["acceleration"] = accelerationObject;
 }
 
 

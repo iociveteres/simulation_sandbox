@@ -13,6 +13,12 @@ void Velocity::readJSON(const QJsonObject &json)
         x = json["y"].toDouble();
 }
 
+void Velocity::writeJSON(QJsonObject &json) const
+{
+    json["x"] = x;
+    json["y"] = y;
+}
+
 Acceleration::Acceleration()
 {
 
@@ -24,4 +30,10 @@ void Acceleration::readJSON(const QJsonObject &json)
         x = json["x"].toDouble();
     if (json.contains("y") && json["y"].isDouble())
         x = json["y"].toDouble();
+}
+
+void Acceleration::writeJSON(QJsonObject &json) const
+{
+    json["x"] = x;
+    json["y"] = y;
 }
