@@ -15,9 +15,9 @@ class RenderArea : public QWidget
 {
     Q_OBJECT
 private:
-    QImage* image;
-    QLabel* label;
-    World* world;
+    QImage* image = NULL;
+    QLabel* label = NULL;
+    World* world = NULL;
     PlayerAI playerToDrawRects = PlayerAI();
 
 public:
@@ -30,11 +30,13 @@ public:
     void drawField();
     void drawBall(Ball* ball);
     void drawRoleRects(QVector<PlayerRole> roles);
-
+    void drawSpeed(QPainter &painter, BaseEntity entity, bool isBall);
     void drawWorld();
 
     QRectF getRectFAtCenter(double x, double y, double awidth, double aheight);
     QRectF getRectFCircleAtCenter(double x, double y, double radius);
+
+
 
 
 public slots:

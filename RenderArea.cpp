@@ -52,6 +52,51 @@ void RenderArea::DrawCircle() {
     painter.drawEllipse(10, 10, 5, 5);
 }
 
+void drawLineWithArrow(QPainter& painter, QPointF start, QPointF end) {
+    /*
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    painter.setPen(Qt::black);
+    painter.setBrush(Qt::black);
+    */
+    qreal arrowSize = 0.5; // size of head
+    QLineF line(end, start);
+
+    double angle = std::atan2(-line.dy(), line.dx());
+    QPointF arrowP1 = line.p1() + QPointF(sin(angle + M_PI / 3) * arrowSize,
+                                        cos(angle + M_PI / 3) * arrowSize);
+    QPointF arrowP2 = line.p1() + QPointF(sin(angle + M_PI - M_PI / 3) * arrowSize,
+                                        cos(angle + M_PI - M_PI / 3) * arrowSize);
+
+    QPolygonF arrowHead;
+    arrowHead.clear();
+    arrowHead << line.p1() << arrowP1 << arrowP2;
+    painter.drawLine(line);
+    painter.drawPolygon(arrowHead);
+}
+
+bool checkSpeed(BaseEntity entity) {
+    if (vectorLength(entity.getVelocity().x, entity.getVelocity().y) >= 0.1)
+        return true;
+    else
+        return false;
+}
+
+void RenderArea::drawSpeed(QPainter& painter, BaseEntity entity, bool isBall) {
+    painter.setWindow(wholeFieldArea);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    QPen p{neutralColor};
+    p.setWidthF(0.1);
+    painter.setPen(p);
+    QPointF start = entity.getCoordinatesPoint() + MarginPoint;
+    if (isBall)
+        start += QPointF(-BALL_WIDGET_SIZE/2, 0);
+    QPointF end = start + entity.getPVelocity();
+    painter.drawLine(start, end);
+    //drawLineWithArrow(painter, start, end);
+}
+
 void RenderArea::drawPlayer(Player player) {
     QPainter painter(image);
     painter.setWindow(wholeFieldArea);
@@ -73,7 +118,7 @@ void RenderArea::drawPlayer(Player player) {
     painter.drawChord(kickableAreaRect, player.getAngle() * 16, 180*16);
     // painter.drawChord(kickableAreaRect, 90 * 16, 180*16);
 
-    Qt::GlobalColor playerColor;
+    Qt::GlobalColor playerColor = allyColor;
     switch (player.getTeam()) {
     case Player::enemy:
         playerColor = enemyColor;
@@ -87,6 +132,8 @@ void RenderArea::drawPlayer(Player player) {
     painter.setBrush(QBrush(playerColor, Qt::SolidPattern));
 
     painter.drawChord(kickableAreaRect, (player.getAngle() + 180) * 16, 180*16);
+    if (checkSpeed(player))
+        drawSpeed(painter, player, false);
 }
 
 void RenderArea::drawIntentions(PlayerAI playerAI) {
@@ -95,7 +142,10 @@ void RenderArea::drawIntentions(PlayerAI playerAI) {
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     Action a = playerAI.getIntention();
-    QPointF intendedPoint = playerAI.getIntention().getPrefferedPoint() - MarginPoint;
+
+    QPointF intendedPoint = playerAI.getIntention().getPrefferedPoint();
+    if (a.getActionType() == Action::Wait)
+        intendedPoint -= MarginPoint;
     QPointF currentPoint = playerAI.getCoordinatesPoint();
     QRectF intendedKickableAreaRect = playerAI.getKickableAreaRect(intendedPoint);
     //intendedKickableAreaRect.moveTopLeft(intendedKickableAreaRect.topLeft() + MarginPoint);
@@ -105,7 +155,7 @@ void RenderArea::drawIntentions(PlayerAI playerAI) {
 
     painter.drawChord(intendedKickableAreaRect, playerAI.getAngle()*16, 180*16);
 
-    Qt::GlobalColor playerColor;
+    Qt::GlobalColor playerColor = allyColor;
     switch (playerAI.getTeam()) {
     case Player::enemy:
         playerColor = enemyColor;
@@ -186,6 +236,9 @@ void RenderArea::drawBall(Ball *ball)
     painter.setPen(q);
     painter.setBrush(QBrush(ballFillColor, Qt::SolidPattern));
     painter.drawEllipse(ballRect);
+
+    if (checkSpeed(*ball))
+        drawSpeed(painter, *ball, true);
 }
 
 void RenderArea::drawRoleRects(QVector<PlayerRole> roles)
@@ -198,7 +251,6 @@ void RenderArea::drawRoleRects(QVector<PlayerRole> roles)
         painter.setPen(QPen(Qt::yellow, 0.08));
 
         for (PlayerRole r: roles) {
-            //QRectF a = r.getRoleRect(); debug, later delete
             painter.setBrush(Qt::NoBrush);
             painter.drawRect(r.getRoleRect());
             painter.setBrush(QBrush(Qt::yellow, Qt::SolidPattern));
@@ -243,8 +295,11 @@ QRectF RenderArea::getRectFAtCenter(double x, double y, double awidth, double ah
 }
 
 void RenderArea::setPlayerToDrawRects(int i) {
-    qDebug() << "Combobox chosen player" << i << "\n" ;
-    playerToDrawRects = world->getTeamAlly()[i];
+    qDebug() << "Combobox chosen player" << i << "\n";
+    if (i >= 0)
+        playerToDrawRects = world->getTeamAlly()[i];
+    else
+        qDebug() << "i = -1 then not assigning";
 }
 
 void RenderArea::setDrawRectsState(int i)

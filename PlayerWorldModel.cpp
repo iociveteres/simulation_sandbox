@@ -149,16 +149,19 @@ int PlayerWorldModel::getHowManyPlayersAreInArea(QRectF area)
     return count;
 }
 
-void PlayerWorldModel::checkFormationIsInBox(QPointF shift) {
-    if (myself->getDefaultRolePosition(PlayerRole::DefenderRight).y()+shift.y()+2*PITCH_WIDTH/16
+void PlayerWorldModel::checkFormationIsInBox(QPointF &shift) {
+    double a = myself->getDefaultRolePosition(PlayerRole::DefenderRight).y()+shift.y()+2*PITCH_WIDTH/16;
+    double b = myself->getDefaultRolePosition(PlayerRole::DefenderLeft).y()+shift.y()-2*PITCH_WIDTH/16;
+    double c = myself->getDefaultRolePosition(PlayerRole::DefenderLeft).x()+shift.x()-2*PITCH_LENGTH/16;
+    if (myself->getDefaultRolePosition(PlayerRole::DefenderRight).y()+shift.y()-2*PITCH_WIDTH/16
             > PITCH_WIDTH)
         shift.setY(PITCH_WIDTH/8);
-    if (myself->getDefaultRolePosition(PlayerRole::DefenderLeft).y()+shift.y()-2*PITCH_WIDTH/16
-            < PITCH_WIDTH)
+    if (myself->getDefaultRolePosition(PlayerRole::DefenderLeft).y()+shift.y()+2*PITCH_WIDTH/16
+            < 0)
         shift.setY(-PITCH_WIDTH/8);
     if (myself->getDefaultRolePosition(PlayerRole::DefenderLeft).x()+shift.x()-2*PITCH_LENGTH/16
-            < PITCH_WIDTH)
-        shift.setY(-PITCH_LENGTH/10);
+            < 0)
+        shift.setX(-PITCH_LENGTH/10);
 }
 
 //
@@ -205,12 +208,16 @@ void PlayerWorldModel::determineFormation()
     }
 }
 
+static bool firstTime = true;
 double rand(double fMin, double fMax)
 {
     if (bDefaultRandomSeed)
         srand (1);
     else
-        srand (time(NULL));
+        if (firstTime) {
+            srand (time(NULL));
+            firstTime = false;
+        }
     double f = (double)rand() / RAND_MAX;
     return fMin + f * (fMax - fMin);
 }

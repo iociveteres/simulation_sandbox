@@ -41,7 +41,6 @@ QPointF findPointInDistFromEndOfSegment(QPointF a, QPointF b, double dist) {
     double x = a.x() + dist*cos(m);
     double y = a.y() + dist*sin(m);
     return QPointF(x, y);
-
 }
 // https://stackoverflow.com/questions/49968720/find-tangent-points-in-a-circle-from-a-point
 std::tuple<QPointF, QPointF> getTangentPointsFromLineAndCircle(QPointF p, QPointF c, double r) {

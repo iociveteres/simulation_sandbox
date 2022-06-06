@@ -41,6 +41,24 @@ void Ball::readJSON(const QJsonObject &json)
 
     if (json.contains("y") && json["y"].isDouble())
         y = json["y"].toDouble();
+
+    if (json.contains("velocity") && json["velocity"].isObject())
+         velocity.readJSON(json["velocity"].toObject());
+
+    if (json.contains("acceleration") && json["acceleration"].isObject())
+         acceleration.readJSON(json["acceleration"].toObject());
+}
+
+void Ball::writeJSON(QJsonObject &json) const
+{
+    json["x"] = x;
+    json["y"] = y;
+    QJsonObject velocityObject;
+    velocity.writeJSON(velocityObject);
+    json["velocity"] = velocityObject;
+    QJsonObject accelerationObject;
+    acceleration.writeJSON(accelerationObject);
+    json["acceleration"] = accelerationObject;
 }
 
 void Ball::tick()
@@ -68,10 +86,4 @@ void Ball::tick()
         acceleration.x /= (accelerationAbs / PLAYER_SPEED_MAX);
         acceleration.y /= (accelerationAbs / PLAYER_SPEED_MAX);
     }
-}
-
-void Ball::writeJSON(QJsonObject &json) const
-{
-    json["x"] = x;
-    json["y"] = y;
 }

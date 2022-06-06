@@ -26,7 +26,7 @@ BaseEntity::BaseEntity(const BaseEntity &b)
 {
     x = b.x;
     y = b.y;
-    y = b.angle;
+    angle = b.angle;
     velocity = b.velocity;
     acceleration = b.acceleration;
 }

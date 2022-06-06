@@ -13,9 +13,9 @@ class MainWindow
         :public QWidget
 {
 private:
-    RenderArea* render;
-    World* world;
-    QComboBox* choosePlayerPersperctiveComboBox;
+    RenderArea* render = NULL;
+    World* world = NULL;
+    QComboBox* choosePlayerPersperctiveComboBox = NULL;
 
 private slots:
     void handleLoadButton();

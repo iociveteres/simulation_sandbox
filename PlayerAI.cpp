@@ -150,7 +150,7 @@ QList<Action> PlayerAI::makePrefferedActionsListMe() {
         actionsOfPlayer.append(b);
     }
     // set cost
-    for (Action a: actionsOfPlayer) {
+    for (Action& a: actionsOfPlayer) {
         a.setCost(distance(a.getPrefferedPoint(),
                            this->
                            getCoordinatesPoint()));
@@ -215,17 +215,32 @@ Action PlayerAI::determinePrefferedIntention()
     QList<Action> myActions = makePrefferedActionsListMe();
     myActions.append(makePrefferedActionsListNeighbours());
 
-    std::sort(myActions.begin(), myActions.end(), Action::desirebilityDescending());
-    std::sort(actionsOfOthers.begin(), actionsOfOthers.end(), Action::costAscending());
+    std::sort(myActions.begin(), myActions.end(),
+              Action::desirebilityDescending());
+    std::sort(actionsOfOthers.begin(), actionsOfOthers.end(),
+              Action::desirebilityDescending());
 
     Action prefferedAction;
+    // Номера игроков, действия для которых уже определены
+    QList<int> skipOthersIds;
     for (Action my: myActions) {
         bool cheapest = true;
         for (Action others: actionsOfOthers) {
-            if (others.getCost() < my.getCost()) {
-                cheapest = false;
-                break;
+            // если ранее не было предположено действие
+            // для этого игрока
+            if (skipOthersIds.indexOf(others.getExecutorId()) == -1) {
+                // если они выполняют разные действия
+                if (my == others)
+                    // и если другой игрок выполняет
+                    // действие дешевле
+                    if (others.getCost() < my.getCost()) {
+                        cheapest = false;
+                        skipOthersIds.append(others.getExecutorId());
+                        break;
+                    }
             }
+            else
+                break;
         }
         if (cheapest == true) {
             prefferedAction = my;
@@ -237,10 +252,6 @@ Action PlayerAI::determinePrefferedIntention()
 
 Action PlayerAI::checkMarking(Player enemy, Player player)
 {
-    const double a = 1;
-    const double b = 1;
-    const double c = 1;
-    const double d = 1;
     double distBtwEnemyAndBall =
             distance(enemy.getCoordinatesPoint(),
                      worldModel->getBall()->getCoordinatesPoint());
@@ -261,7 +272,12 @@ Action PlayerAI::checkMarking(Player enemy, Player player)
     int id = player.getId();
     QRectF roleRect = this->worldModel->getPlayerRoleByAllyId(id).getRoleRect();
     if (roleRect.contains(enemy.getCoordinatesPoint()))
-        enemyInMyZone = 30;
+        enemyInMyZone = 35;
+
+    const double a = 1;
+    const double b = 1;
+    const double c = 1;
+    const double d = 1;
 
     double desirebility =
             a * 5/distBtwEnemyAndBall +
@@ -277,10 +293,6 @@ Action PlayerAI::checkMarking(Player enemy, Player player)
 
 Action PlayerAI::checkDefendGoal(Player player)
 {
-    const double a = 1;
-    const double b = 1;
-    const double c = 1;
-
     double distBtwGoalAndBall =
             distance(QPointF(PITCH_MARGIN, TOTAL_FIELD_WIDTH/2),
                      worldModel->getBall()->getCoordinatesPoint());
@@ -302,8 +314,12 @@ Action PlayerAI::checkDefendGoal(Player player)
         lessThan2AlliesDefendGoal = 0;
     }
 
+    const double a = 1;
+    const double b = 1;
+    const double c = 1;
+
     double desirebility =
-            a * 40/distBtwGoalAndBall +
+            a * 100/distBtwGoalAndBall +
             b * ballIsControlledByEnemy +
             c * lessThan2AlliesDefendGoal;
     desirebility = limit(desirebility, 0, 100);
@@ -314,9 +330,6 @@ Action PlayerAI::checkDefendGoal(Player player)
 
 Action PlayerAI::checkIntercept(Player player)
 {
-    const double a = 1;
-    const double b = 1;
-
     std::tuple<bool, QPointF> t = getPointIntercept(player);
     bool canIreachBall = std::get<0>(t);
     QPointF pointToReachBall = std::get<1>(t);
@@ -327,6 +340,9 @@ Action PlayerAI::checkIntercept(Player player)
 
     double iDontKnowMyEnemies = (worldModel->getTeamEnemy().length()
                                  - worldModel->getEnemyCount())*6;
+
+    const double a = 1;
+    const double b = 1;
 
     double desirebility =
             a * iCanReachBall +
@@ -340,7 +356,7 @@ Action PlayerAI::checkIntercept(Player player)
 
 Action PlayerAI::checkWaitDefensive(Player player)
 {
-    double desirebility = 25;
+    double desirebility = 30;
     double cost = 0;
     return Action(Action::Wait, player.getId(), Action::NoEnemyCode, desirebility, cost);
 }

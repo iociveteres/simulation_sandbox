@@ -44,9 +44,8 @@ PlayerAI World::getAllyById(int id) {
 void World::readJSON(const QJsonObject &json)
 {
 //    if (json.contains("name") && json["name"].isString())
-//        mName = json["name"].toString();
-    Player p;
-    p.player_roleMap.clear();
+//        mName = json["name"].toString();*
+    Player::player_roleMap.clear();
     if (json.contains("teamAlly") && json["teamAlly"].isArray()) {
         QJsonArray teamAllyArray = json["teamAlly"].toArray();
         teamAlly.clear();
@@ -57,7 +56,7 @@ void World::readJSON(const QJsonObject &json)
             player.readJSON(playerObject);
             player.choosePlayerRole();
             teamAlly.append(player);
-            p.player_roleMap[player.getId()] = player.getAssignedRole();
+            Player::player_roleMap[player.getId()] = player.getAssignedRole();
         }
 
     }
@@ -121,9 +120,7 @@ bool World::loadWorld(World::SaveFormat saveFormat, QString fileName)
 
     readJSON(loadDoc.object());
 
-    QTextStream(stdout) << "Loaded save for "
-                        << loadDoc["player"]["name"].toString()
-                        << " using "
+    QTextStream(stdout) << "Loaded save using "
                         << (saveFormat != Json ? "CBOR" : "JSON") << "...\n";
 
     qDebug() << "Succesfull load\n";
@@ -159,6 +156,7 @@ bool World::saveWorld(World::SaveFormat saveFormat) const
 void World::handlePlayButton()
 {
     QList<Action> intendedActions;
+    intendedActions.clear();
     for (PlayerAI& a: teamAlly) {
         a.cycle();
         intendedActions.append(a.getIntention());

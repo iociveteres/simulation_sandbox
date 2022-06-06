@@ -16,8 +16,8 @@ class PlayerAI:
 private:
     double roleMargin;
     Action intention;
-    PlayerWorldModel* worldModel;
-    World* worldLink;
+    PlayerWorldModel* worldModel = NULL;
+    World* worldLink = NULL;
 
 public:
     PlayerAI();

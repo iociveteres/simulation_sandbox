@@ -12,8 +12,8 @@ class World;
 class PlayerWorldModel
 {
 private:
-    Player* myself;
-    Ball* ball;
+    Player* myself = NULL;
+    Ball* ball = NULL;
     int allyCount;
     QVector<Player> teamAlly;
     int enemyCount;
@@ -50,7 +50,7 @@ public:
 
     void update(const World &world, Player *_myself);
 
-    void checkFormationIsInBox(QPointF shift);
+    void checkFormationIsInBox(QPointF &shift);
     int getEnemyCount() const;
 
     QVector<PlayerRole> getFormation() const;

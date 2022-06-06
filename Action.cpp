@@ -39,6 +39,8 @@ bool Action::operator==(const Action &rhs) const
     if (againstId != -1000)
         if (againstId != rhs.againstId)
             return false;
+    if (actionType == ActionType::Wait)
+        return false;
 
     return true;
 }

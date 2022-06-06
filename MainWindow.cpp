@@ -93,6 +93,7 @@ void MainWindow::handleLoadButton()
     if (!fileNames.empty()) {
         world->loadWorld(World::Json, fileNames.at(0));
 
+        choosePlayerPersperctiveComboBox->clear();
         int i = 0;
         for (Player a: world->getTeamAlly()) {
             choosePlayerPersperctiveComboBox->addItem(QString("Игрок ") + QString::number(i));

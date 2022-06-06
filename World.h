@@ -22,7 +22,7 @@ private:
     QVector<PlayerAI> teamAlly;
     QVector<Player> teamEnemy;
 
-    Ball* ball;
+    Ball* ball = NULL;
 
 signals:
     void updateRequired();
@@ -34,8 +34,6 @@ public:
     enum SaveFormat {
             Json, Binary
         };
-
-    //World(const World& a) : teamAlly(a.teamAlly), teamEnemy(a.teamEnemy), ball(a.ball) { } // user-defined copy ctor
 
     World();
     void writeJSON(QJsonObject &json) const;
