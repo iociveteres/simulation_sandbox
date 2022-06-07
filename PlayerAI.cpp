@@ -9,17 +9,7 @@ const QPointF leftPitchRimTopPoint(PITCH_MARGIN,
                                    PITCH_MARGIN);
 const QPointF leftPitchRimBotPoint(PITCH_MARGIN,
                                    PITCH_MARGIN + PITCH_WIDTH);
-
-double PlayerAI::getRoleMargin() const
-{
-    return roleMargin;
-}
-
-PlayerWorldModel *PlayerAI::getWorldModel() const
-{
-    return worldModel;
-}
-
+// конструкторы
 PlayerAI::PlayerAI():
     Player()
 {
@@ -41,11 +31,8 @@ PlayerAI::PlayerAI(Team _team, int _x, int _y,
     worldModel = new PlayerWorldModel();
 }
 
-PlayerAI::~PlayerAI()
-{
-
-}
-
+// цикл игрока из обновления модели мира и
+// определения желаемого действия
 void PlayerAI::cycle()
 {
     worldModel->update(*worldLink, this);
@@ -53,26 +40,31 @@ void PlayerAI::cycle()
     qDebug() << "Player " << this->id
              << " finished cycle succesfully\n";
 }
-
+// получение желаемого действия
 Action PlayerAI::getIntention() const
 {
     return intention;
 }
+// получение модели мира игрока
+PlayerWorldModel *PlayerAI::getWorldModel() const
+{
+    return worldModel;
+}
+// получение текущего отступа от левого края поля
+// для роли игрока
+double PlayerAI::getRoleMargin() const
+{
+    return roleMargin;
+}
 
+// установка роли
 void PlayerAI::setRole(PlayerRole role)
 {
     playerRole = role;
 }
 
-PlayerRole PlayerAI::checkRole()
-{
-//    for (PlayerRole r: roles) {
-
-//    }
-    return Goalie();
-}
-
-
+// получить прямоугольник в координатах окна отрисовки,
+// обозначающий зону, в которой игрок может ударить мяч
 QRectF PlayerAI::getIntentionsKickableAreaRect()
 {
     double _x = this->intention.getPrefferedPoint().x();
@@ -82,9 +74,7 @@ QRectF PlayerAI::getIntentionsKickableAreaRect()
                  KICKABLE_AREA, KICKABLE_AREA);
 }
 
-// calculate level of desirability for possible actions
-// for every known ally against every known enemy
-// return list, containing list of Actions for every player;
+// создание списков действий, доступных для союзников
 QMap<int, QList<Action>> PlayerAI::makePrefferedActionsListOthers()
 {
     QMap<int, QList<Action>> actionsOfPlayers;
@@ -109,7 +99,7 @@ QMap<int, QList<Action>> PlayerAI::makePrefferedActionsListOthers()
             Action a = checkDefendGoal(p);
             Action b = a;
             b.setDefendGoalPart(1);
-            std::tuple<QPointF, QPointF> t = getPointsDefendGoal(a, p);
+            std::tuple<QPointF, QPointF> t = getPointsDefendGoal(p);
             a.setPrefferedPoint(std::get<0>(t));
             b.setPrefferedPoint(std::get<1>(t));
             actionsOfPlayer.append(a);
@@ -117,7 +107,7 @@ QMap<int, QList<Action>> PlayerAI::makePrefferedActionsListOthers()
         }
         actionsOfPlayers[p.getId()] = actionsOfPlayer;
     }
-    // set cost
+    // вычисление стоимости
     for (QList<Action>& list: actionsOfPlayers)
         for (Action& a: list) {
             std::tuple<bool, Player> t = worldModel->
@@ -131,6 +121,7 @@ QMap<int, QList<Action>> PlayerAI::makePrefferedActionsListOthers()
     return actionsOfPlayers;
 }
 
+// создание списка действий игрока
 QList<Action> PlayerAI::makePrefferedActionsListMe() {
     QList<Action> actionsOfPlayer;
 
@@ -151,13 +142,13 @@ QList<Action> PlayerAI::makePrefferedActionsListMe() {
     {
         Action a = checkDefendGoal(*this);
         Action b = a;
-        std::tuple<QPointF, QPointF> t = getPointsDefendGoal(a, *this);
+        std::tuple<QPointF, QPointF> t = getPointsDefendGoal(*this);
         a.setPrefferedPoint(std::get<0>(t));
         b.setPrefferedPoint(std::get<1>(t));
         actionsOfPlayer.append(a);
         actionsOfPlayer.append(b);
     }
-    // set cost
+    // вычисление стоимости действий
     for (Action& a: actionsOfPlayer) {
         a.setCost(distance(a.getPrefferedPoint(),
                            this->
@@ -167,6 +158,8 @@ QList<Action> PlayerAI::makePrefferedActionsListMe() {
     return actionsOfPlayer;
 }
 
+// создание списка действий игркоа с точки зрения игроков других ролей,
+// на данный момент отсутствующих на своей позиции
 QList<Action> PlayerAI::makePrefferedActionsListNeighbours() {
     QList<Action> actionsOfPlayer;
     PlayerRole normalPlayerRole = this->getPlayerRole();
@@ -185,7 +178,7 @@ QList<Action> PlayerAI::makePrefferedActionsListNeighbours() {
             actionsOfPlayer.append(a);
         }
     }
-    // decrease desirebility of actions for other roles and set cost
+    // вычисление стоимости действий
     for (Action& a: actionsOfPlayer) {
         a.setDesirebility(a.getDesirebility() - 7);
         a.setCost(distance(a.getPrefferedPoint(),
@@ -197,6 +190,7 @@ QList<Action> PlayerAI::makePrefferedActionsListNeighbours() {
     return actionsOfPlayer;
 }
 
+// сортировка по желаемости по возрастанию
 struct Action::desirebilityDescending
 {
     inline bool operator() (const Action& a, const Action& b)
@@ -205,7 +199,7 @@ struct Action::desirebilityDescending
     }
 };
 
-
+// сортировка по стоимости по возрастанию
 struct Action::costAscending
 {
     inline bool operator() (const Action& a, const Action& b)
@@ -214,26 +208,8 @@ struct Action::costAscending
     }
 };
 
-bool isEqual(Action a, Action b) {
-    if (a.getActionType() != b.getActionType())
-        return false;
-    if (a.getAgainstId() != b.getAgainstId())
-        return false;
-    if (a.getCost() != b.getCost())
-        return false;
-    if (a.getDesirebility() != b.getDesirebility())
-        return false;
-    if (a.getExecutorId() != b.getExecutorId())
-        return false;
-    if (a.getPrefferedPoint() != b.getPrefferedPoint())
-        return false;
-    return true;
-}
-
-// base cycle
-// let every ally determine what action should he execute,
-// based on desirability of action
-// return list, containing list of Actions for every player;
+// Определение действий, возможных для других игроков,
+// а также выбор действия игрока с учётом этого
 Action PlayerAI::determinePrefferedIntention()
 {
     QMap<int, QList<Action>> actionsOfOthers =
@@ -246,21 +222,28 @@ Action PlayerAI::determinePrefferedIntention()
     for (QList<Action>& list: actionsOfOthers)
         std::sort(list.begin(), list.end(),
                   Action::desirebilityDescending());
-
+    // объединить все действия игроков
     QMap<int, QList<Action>> allActions = actionsOfOthers;
     allActions[this->getId()] = myActions;
+
     QList<Action> prefferedActions;
     bool choosedDif = true;
+    // пока все игроки не выбрали разное действие
     do {
+        // предположить, что игрокам удастся выбрать разные действия
         choosedDif = true;
         prefferedActions.clear();
         for (QList<Action> a: allActions) {
             prefferedActions.append(a.front());
         }
+        // попарно сравнить действия
         for (Action& a: prefferedActions) {
             for (Action& b: prefferedActions) {
                 if (&a == &b)
                     break;
+                // если действия одинаковы убрать более дорогое
+                // из списка доступных действий для игрока,
+                // совершающего его
                 if (a == b) {
                     int id;
                     if (a.getCost() < b.getCost())
@@ -273,44 +256,18 @@ Action PlayerAI::determinePrefferedIntention()
             }
         }
     } while (!choosedDif);
-
+    // среди предпочитаемых действий игроков найти текущего игрока
     Action prefferedAction;
     for (Action& a: prefferedActions) {
         if (a.getExecutorId() == this->getId()) {
-            //return a;
             prefferedAction = a;
             break;
         }
     }
-//    // Номера игроков, действия для которых уже определены
-//    QList<int> skipOthersIds;
-//    for (Action my: myActions) {
-//        bool cheapest = true;
-//        for (Action others: actionsOfOthers) {
-//            // если ранее не было предположено действие
-//            // для этого игрока
-//            if (skipOthersIds.indexOf(others.getExecutorId()) == -1) {
-//                // если они выполняют разные действия
-//                if (my == others)
-//                    // и если другой игрок выполняет
-//                    // действие дешевле
-//                    if (others.getCost() < my.getCost()) {
-//                        cheapest = false;
-//                        skipOthersIds.append(others.getExecutorId());
-//                        break;
-//                    }
-//            }
-//            else
-//                break;
-//        }
-//        if (cheapest == true) {
-//            prefferedAction = my;
-//            break;
-//        }
-//    }
+
     return prefferedAction;
 }
-
+// вычисление эвристики и создание действия опеки противника
 Action PlayerAI::checkMarking(Player enemy, Player player)
 {
     double distBtwEnemyAndBall =
@@ -356,7 +313,7 @@ Action PlayerAI::checkMarking(Player enemy, Player player)
     return Action(Action::Mark, player.getId(),
                   enemy.getId(), desirebility, cost);
 }
-
+// вычисление эвристики и создание действия защиты ворот
 Action PlayerAI::checkDefendGoal(Player player)
 {
     double distBtwGoalAndBall =
@@ -400,7 +357,7 @@ Action PlayerAI::checkDefendGoal(Player player)
     return Action(Action::DefendGoal, player.getId(),
                   Action::NoEnemyCode, desirebility, cost);
 }
-
+// вычисление эвристики и создание действия перехвата мяча
 Action PlayerAI::checkIntercept(Player player)
 {
     std::tuple<bool, QPointF> t = getPointIntercept(player);
@@ -427,7 +384,7 @@ Action PlayerAI::checkIntercept(Player player)
                   Action::NoEnemyCode, desirebility,
                   pointToReachBall, cost);
 }
-
+// вычисление эвристики и создание действия ожидания
 Action PlayerAI::checkWaitDefensive(Player player)
 {
     double desirebility = 30;
@@ -435,12 +392,8 @@ Action PlayerAI::checkWaitDefensive(Player player)
     return Action(Action::Wait, player.getId(),
                   Action::NoEnemyCode, desirebility, cost);
 }
-
-
+// определение точки для опеки противника
 QPointF PlayerAI::getPointMarking(Action a, Player player) {
-//    QPointF executorPos = worldModel->
-//            getAllyById(a.getExecutorId()).
-//            getCoordinatesPoint();
     QPointF ballPos = worldModel->
             getBall()->
             getCoordinatesPoint();
@@ -455,31 +408,9 @@ QPointF PlayerAI::getPointMarking(Action a, Player player) {
                                            ballPos, MarkingDist);
 }
 
-QRectF PlayerAI::findDefendGoalArea()
-{
-    if (worldModel->getBall() != nullptr) {
-        double ballPos_x =
-                worldModel->getBall()->getCoordinatesPoint().x();
-        double defendGoalAreaMargin = PENALTY_AREA_LENGTH - 4;
-        if (ballPos_x < (PENALTY_AREA_LENGTH - 4))
-            defendGoalAreaMargin = ballPos_x - 1;
-        else if (ballPos_x < 1)
-            defendGoalAreaMargin = 0;
-
-        return QRectF(defendGoalAreaMargin,
-                      PITCH_WIDTH/3,
-                      4,
-                      PITCH_WIDTH/3);
-    } else
-        return QRectF(PENALTY_AREA_LENGTH - 4,
-                    PITCH_WIDTH/3,
-                    4,
-                    PITCH_WIDTH/3);
-}
-
-// search for best point in each part
+// поиск оптимальных точек для защиты ворот
 std::tuple<QPointF, QPointF>
-PlayerAI::getPointsDefendGoal(Action a, Player player) {
+PlayerAI::getPointsDefendGoal(Player player) {
     QRectF curDefendGoalArea = findDefendGoalArea();
     QLineF defendGoalLine = QLineF(curDefendGoalArea.left() + 2,
                                    PITCH_WIDTH/3,
@@ -492,10 +423,11 @@ PlayerAI::getPointsDefendGoal(Action a, Player player) {
     double curValue = -1;
     double maxValue = -1;
 
-    // If accidentially there is 0 coverage, which can occur
-    // if ball is to right or left on the field
-    // we should pick point leftest or rightest points accordingly
-    // upper part
+    // Если все вычисленные точки обеспечивают только нулевое закрытие ворот
+    // что возможно, если мяч находится слишком слева или справа
+    // необходимо взять самую левую или правую точку
+    // в каждой зоне соответственно
+    // левая часть
     for (double y = defendGoalLine.y1();
          y <= defendGoalLine.y1()
          + 3*(defendGoalLine.y2() - defendGoalLine.y1())/7;
@@ -522,7 +454,7 @@ PlayerAI::getPointsDefendGoal(Action a, Player player) {
 
     maxValue = -1;
     curValue = -1;
-    // lower part
+    // правая часть
     for (double y = defendGoalLine.y1()
          + 4*(defendGoalLine.y2() - defendGoalLine.y1())/7;
          y <= defendGoalLine.y2();
@@ -545,22 +477,20 @@ PlayerAI::getPointsDefendGoal(Action a, Player player) {
                                   - defendGoalLine.y1())/7);
     else
         lowerPoint = QPointF(defendLineX, defendGoalLine.y2());
-    // At this point we have two points, one in each half,
-    // which brings optimal coverage
 
     return std::make_tuple(upperPoint, lowerPoint);
 }
-
+// вычисление уровня закрытия ворот для отдельной точки
 double PlayerAI::getGoalCoverageRatingFromPlayerPos(QPointF playerPos) {
-    // get tangent points from ball position to circle with center in
-    // supposed player position and with radius of kickable area
+    // поиск касательных от позиции мяча к зоне удара мяча игроком
+    // в рассматриваемой точке
     std::tuple<QPointF, QPointF> pointsTuple =
             getTangentPointsFromLineAndCircle(
                 worldModel->getBall()->getCoordinatesPoint(),
                 playerPos,
                 KICKABLE_AREA);
-    // get intersections of left pitch rim with lines formed by
-    // ball position and points got from previous action
+    // поиск пересечения полученных касательных с краем поля,
+    // на котором находятся ворота
     QPointF intersectingLeftRim1 = intersectTwoLines(
                 leftPitchRimTopPoint,
                 leftPitchRimBotPoint,
@@ -571,8 +501,7 @@ double PlayerAI::getGoalCoverageRatingFromPlayerPos(QPointF playerPos) {
                 leftPitchRimBotPoint,
                 std::get<1>(pointsTuple),
                 worldModel->getBall()->getCoordinatesPoint());
-    // determine which one of points got from previous action has
-    // lesser y coordinate and calculate fit rating
+    // определение, какая из точек пересечения находится выше
     double fitRating;
     if (intersectingLeftRim1.y() < intersectingLeftRim2.y())
         fitRating = howGoodTwoLinesFit(
@@ -588,7 +517,30 @@ double PlayerAI::getGoalCoverageRatingFromPlayerPos(QPointF playerPos) {
                     intersectingLeftRim1);
     return fitRating;
 }
+// определение зоны для защиты ворот относительно положения мяча
+QRectF PlayerAI::findDefendGoalArea()
+{
+    if (worldModel->getBall() != nullptr) {
+        double ballPos_x =
+                worldModel->getBall()->getCoordinatesPoint().x();
+        double defendGoalAreaMargin = PENALTY_AREA_LENGTH - 2;
+        if (ballPos_x < (PENALTY_AREA_LENGTH - 2))
+            defendGoalAreaMargin = ballPos_x - 1;
+        else if (ballPos_x < 1)
+            defendGoalAreaMargin = 0;
 
+        return QRectF(defendGoalAreaMargin,
+                      PITCH_WIDTH/3,
+                      4,
+                      PITCH_WIDTH/3);
+    } else
+        return QRectF(PENALTY_AREA_LENGTH - 4,
+                    PITCH_WIDTH/3,
+                    4,
+                    PITCH_WIDTH/3);
+}
+
+// определение возможности и поиск оптимальной точки для перехвата мяча
 std::tuple<bool, QPointF> PlayerAI::getPointIntercept(Player player)
 {
     int i = 0;
@@ -618,7 +570,7 @@ std::tuple<bool, QPointF> PlayerAI::getPointIntercept(Player player)
 
     return std::make_tuple(false, QPointF());
 }
-
+// получене точки для ожидания
 QPointF PlayerAI::getPointWait(Player player) {
     int id = player.getId();
     QPointF rolePoint =
@@ -626,15 +578,7 @@ QPointF PlayerAI::getPointWait(Player player) {
     return rolePoint;
 }
 
-double PlayerAI::calcRoleMarginFromGoal() {
-    double margin =
-            worldModel->getBall()->getCoordinatesPoint().x() - PITCH_LENGTH/2;
-    if (margin < 0)
-        margin = 0;
-    return margin;
-}
-// Посмотреть позицию союзника и сравнить с той,
-// которая должна быть по формации посмотреть
+// сравнение позиции союзника с той, которая должна быть по построению
 bool PlayerAI::checkAllyIsInPlace(PlayerRole::RoleName roleName)
 {
     QPointF ally =
