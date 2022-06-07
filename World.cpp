@@ -27,7 +27,9 @@ QVector<Player> World::makePlayerTeamAllyForWorldView(int forPlayer) const
     for (PlayerAI p: teamAlly) {
         if (forPlayer == p.getId())
             continue;
-        a.append(Player(p.getTeam(), p.getX(), p.getY(), p.getAngle(), p.getId()));
+        a.append(Player(p.getTeam(), p.getX(), p.getY(), p.getAngle(),
+                        p.getId(), p.getPlayerRole(),
+                        p.getVelocity(), p.getAcceleration()));
     }
 
     return a;
@@ -46,9 +48,10 @@ void World::readJSON(const QJsonObject &json)
 //    if (json.contains("name") && json["name"].isString())
 //        mName = json["name"].toString();*
     Player::player_roleMap.clear();
+    teamAlly.clear();
     if (json.contains("teamAlly") && json["teamAlly"].isArray()) {
         QJsonArray teamAllyArray = json["teamAlly"].toArray();
-        teamAlly.clear();
+
         teamAlly.reserve(teamAllyArray.size());
         for (int playerIndex = 0; playerIndex < teamAllyArray.size(); ++playerIndex) {
             QJsonObject playerObject = teamAllyArray[playerIndex].toObject();
@@ -60,9 +63,10 @@ void World::readJSON(const QJsonObject &json)
         }
 
     }
+    teamEnemy.clear();
     if (json.contains("teamEnemy") && json["teamEnemy"].isArray()) {
         QJsonArray teamEnemyArray = json["teamEnemy"].toArray();
-        teamEnemy.clear();
+
         teamEnemy.reserve(teamEnemyArray.size());
         for (int playerIndex = 0; playerIndex < teamEnemyArray.size(); ++playerIndex) {
             QJsonObject playerObject = teamEnemyArray[playerIndex].toObject();
@@ -74,8 +78,8 @@ void World::readJSON(const QJsonObject &json)
     }
 
    ball = new Ball();
-    if (json.contains("ball") && json["ball"].isObject())
-        ball->readJSON(json["ball"].toObject());  
+   if (json.contains("ball") && json["ball"].isObject())
+       ball->readJSON(json["ball"].toObject());
 }
 
 void World::writeJSON(QJsonObject &json) const

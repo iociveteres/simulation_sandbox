@@ -33,6 +33,8 @@ public:
     Player(Team team);
     Player(Team _team, double _x, double _y, double _angle);
     Player(Team _team, double _x, double _y, double _angle, int _id);
+    Player(Team _team, double _x, double _y, double _angle,
+           int _id, PlayerRole _role, Velocity _v, Acceleration _a);
     Player(const Player &p);
     ~Player();
     PlayerRole choosePlayerRole();
@@ -55,8 +57,7 @@ public:
 
     void tick();
     static std::map<int, PlayerRole::RoleName> player_roleMap;
-    PlayerRole::RoleName getAssignedRole() const;
-
+    PlayerRole::RoleName getAssignedRole() const;  
 protected:
     Team team;
 };

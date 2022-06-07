@@ -36,7 +36,7 @@ public:
     Action getIntention() const;
     double getRoleMargin() const;
 
-    QList<Action> makePrefferedActionsListOthers();
+    QMap<int, QList<Action> > makePrefferedActionsListOthers();
     QList<Action> makePrefferedActionsListMe();
     QList<Action> makePrefferedActionsListNeighbours();
     Action determinePrefferedIntention();

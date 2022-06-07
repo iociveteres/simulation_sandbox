@@ -39,6 +39,9 @@ public:
 
     ActionType getActionType() const;
 
+    int getDefendGoalPart() const;
+    void setDefendGoalPart(int value);
+
 private:
     ActionType actionType;
     int executorId;

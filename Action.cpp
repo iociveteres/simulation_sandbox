@@ -80,6 +80,16 @@ Action::ActionType Action::getActionType() const
     return actionType;
 }
 
+int Action::getDefendGoalPart() const
+{
+    return defendGoalPart;
+}
+
+void Action::setDefendGoalPart(int value)
+{
+    defendGoalPart = value;
+}
+
 int Action::getExecutorId() const
 {
     return executorId;

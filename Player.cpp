@@ -56,6 +56,19 @@ Player::Player(Team _team, double _x, double _y, double _angle, int _id):
     //playerCount++;
 }
 
+Player::Player(Team _team, double _x, double _y, double _angle,
+               int _id, PlayerRole _role, Velocity _v, Acceleration _a):
+    BaseEntity(_x, _y, _angle)
+{
+    playerRole = _role;
+    team = _team;
+    id = _id;
+    velocity = _v;
+    acceleration = _a;
+
+    //playerCount++;
+}
+
 Player::Player(const Player &p): BaseEntity(p)
 {
     x = p.x;
