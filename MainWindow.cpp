@@ -81,6 +81,8 @@ void MainWindow::updateField() {
 void MainWindow::handleLoadButton()
 {
     QFileDialog dialog(this);
+    QDir dir;
+    dialog.setDirectory(dir.currentPath());
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setNameFilter(tr("JSON save (*.json)"));
     dialog.setProperty("selectMultiple", false);
